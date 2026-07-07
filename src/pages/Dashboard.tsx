@@ -12,6 +12,7 @@ function Dashboard() {
 
 
     const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSummary[]>([]);
+    const [workoutsLoading, setWorkoutsLoading] = useState(true);
 
     const kcalRemaining = 1358
     const kcalGoal = 2000
@@ -29,7 +30,10 @@ function Dashboard() {
 
 
     useEffect(() => {
-        workoutApi.getRecent(1, 3).then(setRecentWorkouts);
+        workoutApi.getRecent(1, 3).then((data) => {
+            setRecentWorkouts(data);
+            setWorkoutsLoading(false);
+        });
     },[])
 
     return (
@@ -61,11 +65,21 @@ function Dashboard() {
                     Všetky
                 </button>
             </div>
-            <div className="mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
-                {recentWorkouts.map((workout, i) => (
-                    <WorkoutRow id={workout.id} name={workout.name} date={workout.date} month={workout.month} pr={workout.pr} meta={workout.meta} index={i} />
-                ))}
-            </div>
+            {workoutsLoading ? (
+                <div className="mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
+                    <div className="flex items-center justify-center gap-1.5 py-6">
+                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.3s]" />
+                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.15s]" />
+                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce" />
+                    </div>
+                </div>
+            ) : (
+                <div className="mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
+                    {recentWorkouts.map((workout, i) => (
+                        <WorkoutRow id={workout.id} name={workout.name} date={workout.date} month={workout.month} pr={workout.pr} meta={workout.meta} index={i} />
+                    ))}
+                </div>
+            )}
 
             <BottomNav />
         </div>
