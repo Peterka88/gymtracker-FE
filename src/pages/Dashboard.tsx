@@ -62,7 +62,7 @@ function Dashboard() {
             <div className="flex items-center justify-between px-[22px] pt-[22px] pb-1.5">
                 <span className="text-[15px] font-extrabold">Posledné tréningy</span>
                 <button className="text-accent text-[12.5px] font-bold cursor-pointer" onClick={() => {navigate("/workouts")}}>
-                    Všetky
+                    Všetky tréningy
                 </button>
             </div>
             {workoutsLoading ? (

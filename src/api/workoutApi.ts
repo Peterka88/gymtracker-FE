@@ -10,8 +10,12 @@ interface WorkoutApiResponse {
 
 export const workoutApi = {
     getRecent: (userId = 1,size = 3) => {
-        return client.get<WorkoutApiResponse[]>('/workouts', {params: {userId, size}}).
-        then((res) => res.data.map(toWorkoutRowProps))
+        return client.get<WorkoutApiResponse[]>('/workouts', {params: {userId, size}})
+            .then((res) => res.data.map(toWorkoutRowProps))
+    },
+    getAll: (userId = 1, page = 0, size = 10) => {
+        return client.get<WorkoutApiResponse[]>('/workouts', {params: {userId, page, size}})
+            .then((res) => res.data.map(toWorkoutRowProps))
     }
 }
 

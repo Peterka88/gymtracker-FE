@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import WorkoutRow from "../components/WorkoutRow.tsx";
 import BottomNav from "../components/BottomNav";
+import {useEffect, useState} from "react";
+import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
+import {workoutApi} from "../api/workoutApi.ts";
 
 function DumbbellIcon() {
     return (
@@ -18,24 +21,28 @@ function WorkoutsListPage() {
 
     const navigate = useNavigate();
 
+    const PAGE_SIZE = 10
+
+    const [workouts, setWorkouts] = useState<WorkoutSummary[]>([])
+    const [page, setPage] = useState(0)
+    const [hasMore, setHasMore] = useState(true)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        workoutApi.getAll(1, 0, PAGE_SIZE).then((data) => {
+            setWorkouts(data);
+            setHasMore(data.length === PAGE_SIZE);
+            setPage(0)
+            setLoading(false)
+        });
+    }, [])
+
     const stats = {
         thisWeek: 4,
         hoursInGym: '6,2',
         streakDays: 12,
     }
 
-    const workouts = [
-        { date: '27', month: 'JÚN', name: 'Push deň', pr: true, meta: 'Dnes · 6 cvikov · 48 min · 4 250 kg' },
-        { date: '25', month: 'JÚN', name: 'Pull deň', pr: false, meta: 'Pred 2 dňami · 5 cvikov · 52 min · 5 100 kg' },
-        { date: '23', month: 'JÚN', name: 'Deň nôh', pr: true, meta: 'Pred 4 dňami · 6 cvikov · 61 min · 8 400 kg' },
-        { date: '21', month: 'JÚN', name: 'Push deň', pr: false, meta: 'Pred 6 dňami · 6 cvikov · 46 min · 4 050 kg' },
-        { date: '19', month: 'JÚN', name: 'Pull deň', pr: false, meta: '19. jún · 5 cvikov · 49 min · 4 980 kg' },
-        { date: '17', month: 'JÚN', name: 'Deň nôh', pr: false, meta: '17. jún · 6 cvikov · 58 min · 8 100 kg' },
-        { date: '28', month: 'MÁJ', name: 'Push deň', pr: false, meta: '28. máj · 6 cvikov · 45 min · 4 100 kg' },
-        { date: '25', month: 'MÁJ', name: 'Pull deň', pr: false, meta: '25. máj · 5 cvikov · 50 min · 4 900 kg' },
-    ]
-
-    // zoskupí po sebe idúce záznamy z rovnakého mesiaca a zachová im globálny index (kvôli zvýrazneniu prvého riadku)
     const monthGroups = workouts.reduce<{ month: string; items: (typeof workouts[number] & { index: number })[] }[]>(
         (groups, workout, index) => {
             const item = { ...workout, index }
@@ -93,6 +100,16 @@ function WorkoutsListPage() {
                 <span className="text-text-faint text-lg">›</span>
             </div>
 
+            {loading && (
+                <div className="mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
+                    <div className="flex items-center justify-center gap-1.5 py-6">
+                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.3s]" />
+                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.15s]" />
+                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce" />
+                    </div>
+                </div>
+            )}
+
             {monthGroups.map((group) => (
                 <div key={group.month}>
                     <div className="px-[22px] pt-6 pb-1.5">
@@ -101,8 +118,7 @@ function WorkoutsListPage() {
                     <div className="px-5">
                         {group.items.map((workout) => (
                             <WorkoutRow
-                                id={workout.index}
-                                key={workout.date + workout.name}
+                                id={workout.id}
                                 name={workout.name}
                                 date={workout.date}
                                 month={workout.month}
@@ -114,6 +130,19 @@ function WorkoutsListPage() {
                     </div>
                 </div>
             ))}
+
+            {hasMore && !loading &&(
+                <button className="mx-5 mt-4 p-4 bg-card border border-white/[0.07] font-bold rounded-2xl text-center cursor-pointer hover:bg-card-hover transition-all duration-150 hover:brightness-110 active:scale-[0.97]"
+                onClick={() => {
+                    workoutApi.getAll(1, page + 1, PAGE_SIZE).then((data) => {
+                        setWorkouts([...workouts, ...data]);
+                        setHasMore(data.length === PAGE_SIZE);
+                        setPage(page + 1);
+                    });
+                }}>
+                Načítať dalšie
+            </button>
+            )}
 
             <BottomNav />
         </div>
