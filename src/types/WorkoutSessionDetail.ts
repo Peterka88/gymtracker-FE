@@ -18,7 +18,7 @@ export interface SessionExercise {
     workoutSets: WorkoutSet[]
 }
 
-interface WorkoutSet {
+export interface WorkoutSet {
     id: number
     weight: number
     reps: number

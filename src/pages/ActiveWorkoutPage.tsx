@@ -2,106 +2,137 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
 import ExerciseCard from "../components/ExerciseCard.tsx";
+import type {SessionExercise, WorkoutSessionDetail, WorkoutSet} from "../types/WorkoutSessionDetail.ts";
 
-type SetStatus = 'done' | 'pr' | 'pending'
-export type SetRow = { series: number; kg: number; reps: number; status: SetStatus }
-export type Exercise = { id: string; name: string; pr: boolean; expanded: boolean; sets: SetRow[]; notes: string }
+export type UiWorkoutSet = Omit<WorkoutSet, 'id'> & {
+    id: number | null
+}
 
-const initialExercises: Exercise[] = [
-    {
-        id: 'bench-press',
-        name: 'Bench press',
-        pr: true,
-        expanded: true,
-        notes: '',
-        sets: [
-            { series: 1, kg: 60, reps: 10, status: 'done' },
-            { series: 2, kg: 70, reps: 8, status: 'pr' },
-            { series: 3, kg: 70, reps: 8, status: 'done' },
-            { series: 4, kg: 60, reps: 10, status: 'pending' },
-        ],
-    },
-    {
-        id: 'sklonene-tlaky',
-        name: 'Sklon. tlaky s činkami',
-        pr: false,
-        expanded: false,
-        notes: '',
-        sets: [
-            { series: 1, kg: 22, reps: 10, status: 'done' },
-            { series: 2, kg: 22, reps: 10, status: 'done' },
-            { series: 3, kg: 22, reps: 9, status: 'done' },
-        ],
-    },
-    {
-        id: 'tlaky-nad-hlavu',
-        name: 'Tlaky nad hlavu',
-        pr: false,
-        expanded: false,
-        notes: '',
-        sets: [
-            { series: 1, kg: 30, reps: 10, status: 'pending' },
-            { series: 2, kg: 30, reps: 10, status: 'pending' },
-            { series: 3, kg: 30, reps: 10, status: 'pending' },
-        ],
-    },
-]
+export type UiSessionExercise = Omit<SessionExercise, 'workoutSets'> & {
+    expanded: boolean
+    workoutSets: UiWorkoutSet[]
+}
+
+type UiWorkoutSession = Omit<WorkoutSessionDetail, 'sessionExercises'> & {
+    id: number
+    sessionExercises: UiSessionExercise[]
+}
+
+const dummySession: UiWorkoutSession = {
+    id: 1,
+    name: 'Push Day',
+    startedAt: new Date().toISOString(),
+    duration: 0,
+    note: '',
+    pr: false,
+    sessionExercises: [
+        {
+            id: 1,
+            exerciseId: 101,
+            exerciseName: 'Bench press',
+            orderIndex: 0,
+            note: '',
+            expanded: true,
+            workoutSets: [
+                { id: 1, weight: 60, reps: 10, pr: false },
+                { id: 2, weight: 65, reps: 8, pr: true },
+                { id: 3, weight: 65, reps: 8, pr: false },
+            ],
+        },
+        {
+            id: 2,
+            exerciseId: 102,
+            exerciseName: 'Shoulder press',
+            orderIndex: 1,
+            note: '',
+            expanded: false,
+            workoutSets: [
+                { id: 4, weight: 30, reps: 12, pr: false },
+                { id: 5, weight: 32, reps: 10, pr: false },
+            ],
+        },
+        {
+            id: 3,
+            exerciseId: 103,
+            exerciseName: 'Tricep pushdown',
+            orderIndex: 2,
+            note: '',
+            expanded: false,
+            workoutSets: [],
+        },
+    ],
+}
 
 function ActiveWorkoutPage() {
 
     const navigate = useNavigate();
-    const [workoutName, setWorkoutName] = useState('Nový tréning');
-    const [workoutNotes, setWorkoutNotes] = useState('');
-    const [exercises, setExercises] = useState(initialExercises);
+    const [session, setSession] = useState<UiWorkoutSession | null>(dummySession);
 
-    function toggleExpanded(id: string) {
-        setExercises((current) =>
-            current.map((exercise) => (exercise.id === id ? { ...exercise, expanded: !exercise.expanded } : exercise))
-        );
+    const exercises = session?.sessionExercises ?? [];
+
+    function updateWorkoutName(name: string) {
+        setSession((current) => (current ? { ...current, name } : current));
     }
 
-    function updateExerciseNotes(id: string, notes: string) {
-        setExercises((current) =>
-            current.map((exercise) => (exercise.id === id ? { ...exercise, notes } : exercise))
-        );
+    function updateWorkoutNote(note: string) {
+        setSession((current) => (current ? { ...current, note } : current));
     }
 
-    function addSet(id: string, kg: number, reps: number) {
-        setExercises((current) =>
-            current.map((exercise) => {
-                if (exercise.id !== id) return exercise;
-                return {
-                    ...exercise,
-                    sets: [
-                        ...exercise.sets,
-                        {
-                            series: exercise.sets.length + 1,
-                            kg,
-                            reps,
-                            status: 'pending',
-                        },
-                    ],
-                };
-            })
-        );
+    function toggleExpanded(exerciseId: number) {
+        setSession((current) => {
+            if (!current) return current;
+            return {
+                ...current,
+                sessionExercises: current.sessionExercises.map((exercise) =>
+                    exercise.id === exerciseId ? { ...exercise, expanded: !exercise.expanded } : exercise
+                ),
+            };
+        });
     }
 
-    function editSet(id: string, series: number, kg: number, reps: number) {
-        setExercises((current) =>
-            current.map((exercise) => {
-                if (exercise.id !== id) return exercise;
-                return {
-                    ...exercise,
-                    sets: exercise.sets.map((set) => (set.series === series ? { ...set, kg, reps } : set)),
-                };
-            })
-        );
+    function updateExerciseNote(exerciseId: number, note: string) {
+        setSession((current) => {
+            if (!current) return current;
+            return {
+                ...current,
+                sessionExercises: current.sessionExercises.map((exercise) =>
+                    exercise.id === exerciseId ? { ...exercise, note } : exercise
+                ),
+            };
+        });
     }
 
-    const completedExercisesCount = exercises.filter((exercise) =>
-        exercise.sets.every((set) => set.status !== 'pending')
-    ).length;
-    const exerciseProgressPercent = (completedExercisesCount / exercises.length) * 100;
+    function addSet(exerciseId: number, weight: number, reps: number) {
+        setSession((current) => {
+            if (!current) return current;
+            return {
+                ...current,
+                sessionExercises: current.sessionExercises.map((exercise) => {
+                    if (exercise.id !== exerciseId) return exercise;
+                    const newSet: UiWorkoutSet = { id: null, weight, reps, pr: false };
+                    return { ...exercise, workoutSets: [...exercise.workoutSets, newSet] };
+                }),
+            };
+        });
+    }
+
+    function editSet(exerciseId: number, setIndex: number, weight: number, reps: number) {
+        setSession((current) => {
+            if (!current) return current;
+            return {
+                ...current,
+                sessionExercises: current.sessionExercises.map((exercise) => {
+                    if (exercise.id !== exerciseId) return exercise;
+                    return {
+                        ...exercise,
+                        workoutSets: exercise.workoutSets.map((set, index) =>
+                            index === setIndex ? { ...set, weight, reps } : set
+                        ),
+                    };
+                }),
+            };
+        });
+    }
 
     return (
         <div className="flex flex-col min-h-screen pb-28">
@@ -114,8 +145,8 @@ function ActiveWorkoutPage() {
                 </button>
                 <div className="text-center">
                     <input
-                        value={workoutName}
-                        onChange={(event) => setWorkoutName(event.target.value)}
+                        value={session?.name ?? ''}
+                        onChange={(event) => updateWorkoutName(event.target.value)}
                         className="text-[16px] font-extrabold text-center bg-transparent outline-none w-[170px]"
                     />
                     <div className="text-accent text-[11.5px] font-bold flex items-center gap-1.5 justify-center mt-0.5">
@@ -127,30 +158,14 @@ function ActiveWorkoutPage() {
                 </button>
             </div>
 
-            <div className="mx-5 p-4 bg-card border border-white/[0.07] rounded-2xl">
-                <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-[14px] font-extrabold">Postup tréningu</span>
-                    <span className="text-[13px]">
-                        <span className="font-extrabold">{completedExercisesCount}</span>
-                        <span className="text-protein font-semibold"> / {exercises.length} cviky</span>
-                    </span>
-                </div>
-                <div className="h-2 rounded-full bg-track overflow-hidden">
-                    <div
-                        className="h-full rounded-full bg-accent transition-[width] duration-300"
-                        style={{ width: `${exerciseProgressPercent}%` }}
-                    />
-                </div>
-            </div>
-
             {exercises.map((exercise) => (
                 <ExerciseCard
                     key={exercise.id}
                     exercise={exercise}
                     onToggle={() => toggleExpanded(exercise.id)}
-                    onAddSet={(kg, reps) => addSet(exercise.id, kg, reps)}
-                    onEditSet={(series, kg, reps) => editSet(exercise.id, series, kg, reps)}
-                    onNotesChange={(notes) => updateExerciseNotes(exercise.id, notes)}
+                    onAddSet={(weight, reps) => addSet(exercise.id, weight, reps)}
+                    onEditSet={(setIndex, weight, reps) => editSet(exercise.id, setIndex, weight, reps)}
+                    onNotesChange={(note) => updateExerciseNote(exercise.id, note)}
                 />
             ))}
 
@@ -159,8 +174,8 @@ function ActiveWorkoutPage() {
                     Poznámky k tréningu
                 </div>
                 <textarea
-                    value={workoutNotes}
-                    onChange={(event) => setWorkoutNotes(event.target.value)}
+                    value={session?.note ?? ''}
+                    onChange={(event) => updateWorkoutNote(event.target.value)}
                     placeholder="Ako prebiehal tréning?"
                     rows={3}
                     className="w-full bg-card border border-white/[0.07] rounded-2xl px-4 py-3 text-[13.5px] text-text-primary placeholder:text-text-faint outline-none resize-none"
@@ -179,7 +194,7 @@ function ActiveWorkoutPage() {
             <div className="px-5 mt-2.5">
                 <button
                     onClick={() => navigate('/workout')}
-                    className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
+                    className="w-full bg-red-500 text-on-accent rounded-2xl py-4 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
                 >
                     Ukončiť tréning
                 </button>

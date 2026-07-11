@@ -52,7 +52,8 @@ function Dashboard() {
                 <button className="flex-[1.4] flex items-center cursor-pointer justify-center gap-2 py-3.5 rounded-2xl bg-accent text-on-accent text-[13.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97]">
                     ＋ Pridať jedlo
                 </button>
-                <button className="flex-1 py-3.5 rounded-2xl border cursor-pointer border-white/10 bg-chip text-text-secondary text-[13.5px] font-bold transition-all duration-150 hover:bg-white/6 active:scale-[0.97]">
+                <button className="flex-1 py-3.5 rounded-2xl border cursor-pointer border-white/10 bg-chip text-text-secondary text-[13.5px] font-bold transition-all duration-150 hover:bg-white/6 active:scale-[0.97]"
+                        onClick={() => navigate('/workouts/new')}>
                     Tréning
                 </button>
             </div>

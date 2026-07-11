@@ -1,68 +1,66 @@
 import Stepper from "./Stepper.tsx";
 import {useState} from "react";
-import type {Exercise, SetRow} from "../pages/ActiveWorkoutPage.tsx";
+import type {UiSessionExercise, UiWorkoutSet} from "../pages/ActiveWorkoutPage.tsx";
 import {formatSeries} from "../utils/formatSeries.ts";
 
 
 function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }: {
-    exercise: Exercise
+    exercise: UiSessionExercise
     onToggle: () => void
-    onAddSet: (kg: number, reps: number) => void
-    onEditSet: (series: number, kg: number, reps: number) => void
-    onNotesChange: (notes: string) => void
+    onAddSet: (weight: number, reps: number) => void
+    onEditSet: (setIndex: number, weight: number, reps: number) => void
+    onNotesChange: (note: string) => void
 }) {
-    const doneCount = exercise.sets.filter((set) => set.status !== 'pending').length;
-    const allDone = doneCount === exercise.sets.length;
-    const lastSet = exercise.sets[exercise.sets.length - 1];
+    const hasPr = exercise.workoutSets.some((set) => set.pr);
+    const lastSet = exercise.workoutSets[exercise.workoutSets.length - 1];
 
     const [addingSet, setAddingSet] = useState(false);
-    const [draftKg, setDraftKg] = useState(lastSet?.kg ?? 0);
+    const [draftWeight, setDraftWeight] = useState(lastSet?.weight ?? 0);
     const [draftReps, setDraftReps] = useState(lastSet?.reps ?? 0);
 
-    const [editingSeries, setEditingSeries] = useState<number | null>(null);
-    const [editDraftKg, setEditDraftKg] = useState(0);
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editDraftWeight, setEditDraftWeight] = useState(0);
     const [editDraftReps, setEditDraftReps] = useState(0);
 
     function openAddSet() {
-        setEditingSeries(null);
-        setDraftKg(lastSet?.kg ?? 0);
+        setEditingIndex(null);
+        setDraftWeight(lastSet?.weight ?? 0);
         setDraftReps(lastSet?.reps ?? 0);
         setAddingSet(true);
     }
 
     function confirmAddSet() {
-        onAddSet(draftKg, draftReps);
+        onAddSet(draftWeight, draftReps);
         setAddingSet(false);
     }
 
-    function openEditSet(set: SetRow) {
+    function openEditSet(set: UiWorkoutSet, index: number) {
         setAddingSet(false);
-        setEditingSeries(set.series);
-        setEditDraftKg(set.kg);
+        setEditingIndex(index);
+        setEditDraftWeight(set.weight);
         setEditDraftReps(set.reps);
     }
 
     function confirmEditSet() {
-        if (editingSeries !== null) {
-            onEditSet(editingSeries, editDraftKg, editDraftReps);
+        if (editingIndex !== null) {
+            onEditSet(editingIndex, editDraftWeight, editDraftReps);
         }
-        setEditingSeries(null);
+        setEditingIndex(null);
     }
 
     return (
         <div className="mx-5 mt-3 first:mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl">
             <div onClick={onToggle} className="flex items-center justify-between cursor-pointer">
                 <div className="flex items-center gap-1.5 text-[14.5px] font-extrabold">
-                    {exercise.name}
-                    {exercise.pr && (
+                    {exercise.exerciseName}
+                    {hasPr && (
                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-carbs/[0.16] text-carbs text-[9.5px] font-extrabold">
                             🏆 PR
                         </span>
                     )}
                 </div>
-                <span className={`text-[11.5px] font-bold flex items-center gap-1 ${allDone ? 'text-accent' : 'text-text-muted'}`}>
-                    {formatSeries(exercise.sets.length)}
-                    {allDone && ' ✓'}
+                <span className={`text-[11.5px] font-bold flex items-center gap-1 'text-text-muted'`}>
+                    {formatSeries(exercise.workoutSets.length)}
                     <span className={`inline-block transition-transform duration-200 ${exercise.expanded ? 'rotate-90' : ''}`}>
                         ›
                     </span>
@@ -76,29 +74,28 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
             >
                 <div className="overflow-hidden">
                     <div className="pt-2.5">
-                        <div className="flex text-text-faint text-[10.5px] font-bold uppercase tracking-[0.05em] px-1 pb-1.5">
-                            <span className="w-10">Séria</span>
-                            <span className="flex-1 text-center">Kg</span>
-                            <span className="flex-1 text-center">Opak.</span>
-                            <span className="w-8 text-right">✓</span>
+                        <div className="grid grid-cols-3 text-text-faint text-[10.5px] font-bold uppercase tracking-[0.05em] px-1 pb-1.5">
+                            <span className="text-center">Séria</span>
+                            <span className="text-center">Kg</span>
+                            <span className="text-center">Opak</span>
                         </div>
 
-                        {exercise.sets.map((set) =>
-                            editingSeries === set.series ? (
-                                <div key={set.series} className="mt-1.5 mb-1.5 p-4 bg-btn border border-white/[0.07] rounded-2xl">
+                        {exercise.workoutSets.map((set, index) =>
+                            editingIndex === index ? (
+                                <div key={set.id} className="mt-1.5 mb-1.5 p-4 bg-btn border border-white/[0.07] rounded-2xl">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="text-text-faint text-[11px] font-bold tracking-wider uppercase">
-                                            Upraviť sériu · {set.series}
+                                            Upraviť sériu · {index + 1}
                                         </div>
                                         <button
-                                            onClick={() => setEditingSeries(null)}
+                                            onClick={() => setEditingIndex(null)}
                                             className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-text-muted text-xs cursor-pointer"
                                         >
                                             ✕
                                         </button>
                                     </div>
                                     <div className="flex gap-4">
-                                        <Stepper label="Váha (kg)" value={editDraftKg} onChange={setEditDraftKg} color="text-protein" />
+                                        <Stepper label="Váha (kg)" value={editDraftWeight} onChange={setEditDraftWeight} color="text-protein" />
                                         <Stepper label="Opakovania" value={editDraftReps} onChange={setEditDraftReps} color="text-fat" allowDecimals={false} />
                                     </div>
                                     <button
@@ -110,38 +107,31 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
                                 </div>
                             ) : (
                                 <div
-                                    key={set.series}
-                                    onClick={() => openEditSet(set)}
-                                    className={`flex items-center text-[13.5px] px-1 py-2 rounded-lg cursor-pointer ${
-                                        set.status === 'pr'
-                                            ? 'bg-carbs/[0.08] border border-carbs/[0.22]'
+                                    key={ set.id }
+                                    onClick={() => openEditSet(set, index)}
+                                    className={`grid grid-cols-3 items-center text-[13.5px] px-1 py-2 cursor-pointer rounded-lg ${
+                                        set.pr
+                                            ? 'bg-carbs/[0.16]'
                                             : ''
                                     }`}
                                 >
-                                    <span className="w-10 font-bold flex items-center gap-1">
-                                        {set.series}
-                                        {set.status === 'pr' && <span className="text-[11px]">🏆</span>}
+                                    <span className="font-bold flex justify-center items-center gap-1">
+                                        {index + 1}
+                                        {set.pr && <span className="text-[12px]">🏆</span>}
                                     </span>
-                                    <span className={`flex-1 text-center ${set.status === 'pr' ? 'font-bold text-carbs' : ''}`}>
-                                        {set.kg}
+                                    <span className={`text-center ${set.pr ? 'font-bold text-carbs' : ''}`}>
+                                        {set.weight}
                                     </span>
-                                    <span className="flex-1 text-center">{set.reps}</span>
-                                    <span className="w-8 text-right">
-                                        {set.status === 'pending' ? (
-                                            <span className="text-text-faint">○</span>
-                                        ) : (
-                                            <span className="text-accent font-extrabold">✓</span>
-                                        )}
-                                    </span>
+                                    <span className="text-center">{set.reps}</span>
                                 </div>
                             )
                         )}
 
-                        {addingSet ? (
+                        { addingSet ? (
                             <div className="mt-2 p-4 bg-btn border border-white/[0.07] rounded-2xl">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="text-text-faint text-[11px] font-bold tracking-[0.05em] uppercase">
-                                        Nová séria · {exercise.sets.length + 1}
+                                        Nová séria · {exercise.workoutSets.length + 1}
                                     </div>
                                     <button
                                         onClick={() => setAddingSet(false)}
@@ -151,7 +141,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
                                     </button>
                                 </div>
                                 <div className="flex gap-4">
-                                    <Stepper label="Váha (kg)" value={draftKg} onChange={setDraftKg} color="text-protein" />
+                                    <Stepper label="Váha (kg)" value={draftWeight} onChange={setDraftWeight} color="text-protein" />
                                     <Stepper label="Opakovania" value={draftReps} onChange={setDraftReps} color="text-fat" allowDecimals={false} />
                                 </div>
                                 <button
@@ -171,9 +161,9 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
                         )}
 
                         <textarea
-                            value={exercise.notes}
+                            value={exercise.note}
                             onChange={(event) => onNotesChange(event.target.value)}
-                            placeholder="Poznámka k cviku (napr. nabudúce pridať váhu)"
+                            placeholder="+ Pridať poznámku"
                             rows={2}
                             className="w-full mt-2.5 bg-btn border border-white/[0.07] rounded-lg px-3 py-2 text-[12.5px] text-text-primary placeholder:text-text-faint outline-none resize-none"
                         />

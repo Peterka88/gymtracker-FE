@@ -64,7 +64,8 @@ function WorkoutsListPage() {
                     <div className="text-[26px] font-extrabold">Tréningy</div>
                     <div className="text-text-muted text-[12.5px] mt-0.5">42 záznamov · tento rok</div>
                 </div>
-                <button className="w-10 h-10 rounded-2xl bg-accent text-on-accent flex items-center justify-center text-xl font-bold cursor-pointer transition-all duration-150 hover:brightness-110 active:scale-[0.95]">
+                <button className="w-10 h-10 rounded-2xl bg-accent text-on-accent flex items-center justify-center text-xl font-bold cursor-pointer transition-all duration-150 hover:brightness-110 active:scale-[0.95]"
+                        onClick={() => navigate('/workouts/new')}>
                     +
                 </button>
             </div>
