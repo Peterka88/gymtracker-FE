@@ -8,6 +8,8 @@ import AddExercisePage from "./pages/AddExercisePage.tsx"
 import ExercisesListPage from "./pages/ExercisesListPage.tsx"
 import ActiveWorkoutPage from "./pages/ActiveWorkoutPage.tsx"
 import AddExerciseToWorkoutPage from "./pages/AddExerciseToWorkoutPage.tsx"
+import WorkoutDetailPage from "./pages/WorkoutDetailPage.tsx";
+
 
 function App() {
 
@@ -22,6 +24,7 @@ function App() {
                 <Route path={"/exercises"} element={<ExercisesListPage />} />
                 <Route path={"/workouts/new"} element={<ActiveWorkoutPage />} />
                 <Route path={"/workouts/add-exercise"} element={<AddExerciseToWorkoutPage />} />
+                <Route path={"/workouts/:id"} element={<WorkoutDetailPage />} />
             </Routes>
         </Router>
     </AppShell>
