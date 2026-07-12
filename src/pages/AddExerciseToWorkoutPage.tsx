@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {
     MuscleGroupCategory,
     muscleGroupLabel,
@@ -9,6 +9,8 @@ import {
 } from "../types/Exercises.ts";
 import {fetchExercises} from "../api/exercisesApi.ts";
 import SearchIcon from "../components/icons/SearchIcon.tsx";
+import {workoutApi} from "../api/workoutApi.ts";
+import type {PageResponse} from "../types/PageResponse.ts";
 
 function ChevronDownIcon() {
     return (
@@ -20,7 +22,10 @@ function ChevronDownIcon() {
 
 const categoryFilters: (MuscleGroupCategory | 'Všetko')[] = ['Všetko', ...Object.values(MuscleGroupCategory)]
 
+
 function AddExerciseToWorkoutPage() {
+
+    const { id } = useParams<{id: string}>()
 
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
@@ -28,14 +33,28 @@ function AddExerciseToWorkoutPage() {
     const [selectedGroup, setSelectedGroup] = useState<MuscleGroup | null>(null);
     const [subFiltersOpen, setSubFiltersOpen] = useState(false);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
-    const [exercises, setExercises] = useState<Exercise[]>();
+    const [exercises, setExercises] = useState<Exercise[]>([]);
 
     const [page, setPage] = useState(0);
+    const [pageInfo, setPageInfo] = useState<PageResponse<Exercise>>(
+        {
+            last: false,
+            content: [],
+            page: 0,
+            size: 0,
+            totalElements: 0,
+            totalPages: 0
+        }
+    )
+    const [loading, setLoading] = useState(true)
 
 
     useEffect(() => {
         fetchExercises(page, 10).then((data) => {
             setExercises(data.content)
+            setPage(page + 1)
+            setPageInfo(data)
+            setLoading(false)
         })
     }, []);
 
@@ -58,8 +77,9 @@ function AddExerciseToWorkoutPage() {
 
     const groupsInCategory = selectedCategory === 'Všetko' ? [] : muscleGroupsInCategory(selectedCategory);
 
-    const selectedExercises = (exercises) ?
-        exercises.filter((exercise) => selectedIds.includes(exercise.id)) : [];
+    const selectedExercises = selectedIds
+        .map((selectedId) => exercises.find((exercise) => exercise.id === selectedId))
+        .filter((exercise) => exercise !== undefined)
 
     const unselectedExercises = (exercises) ? exercises
         .filter((exercise) => !selectedIds.includes(exercise.id))
@@ -75,14 +95,14 @@ function AddExerciseToWorkoutPage() {
         <div className="flex flex-col min-h-screen pb-8">
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button
-                    onClick={() => navigate('/workouts/new')}
+                    onClick={() => navigate(`/workouts/${id}/active`)}
                     className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl cursor-pointer"
                 >
                     ‹
                 </button>
                 <div className="text-[17px] font-extrabold">Pridať cvik</div>
                 <button
-                    onClick={() => navigate('/workouts/new')}
+                    onClick={() => navigate(`/workouts/${id}/active`)}
                     className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-muted text-base cursor-pointer"
                 >
                     ⨯
@@ -190,7 +210,7 @@ function AddExerciseToWorkoutPage() {
 
             <div className="px-5 mt-5">
                 <div className="text-text-faint text-[11px] font-bold tracking-[0.08em] uppercase mb-1">
-                    Všetky cviky
+                    Všetky cviky ({pageInfo.totalElements})
                 </div>
                 {unselectedExercises.map((exercise) => (
                     <div
@@ -211,14 +231,35 @@ function AddExerciseToWorkoutPage() {
                 ))}
             </div>
 
+            {!pageInfo.last  && !loading && (
+                <button
+                    className={"mx-5 mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl font-bold text-center cursor-pointer hover:bg-card-hover transition-all duration-150 hover:brightness-110 active:scale-[0.97]"}
+                    onClick={() => {
+                        fetchExercises(page, 10).then((data) => {
+                            setExercises((current) => [...current, ...data.content])
+                            setPage(page+1)
+                            setPageInfo(data)
+                        })
+                    }}
+                >
+                    Načítať ďalšie
+                </button>
+            )}
+
+
             <div className="px-5 mt-6">
                 <button
-                    onClick={() => navigate('/workouts/new')}
-                    className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
+                    disabled={selectedExercises.length === 0}
+                    onClick={() => workoutApi.addExercise(Number(id), selectedIds, 1).then(
+                            () => navigate(`/workouts/${id}/active`))}
+
+                    className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer
+                                disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
                 >
                     Pridať {selectedExercises.length} {selectedExercises.length === 1 ? 'cvik' : 'cviky'}
                 </button>
             </div>
+
         </div>
     )
 }
