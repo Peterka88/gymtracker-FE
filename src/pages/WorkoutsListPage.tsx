@@ -3,19 +3,8 @@ import WorkoutRow from "../components/WorkoutRow.tsx";
 import BottomNav from "../components/BottomNav";
 import {useEffect, useState} from "react";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
-import {workoutApi} from "../api/workoutApi.ts";
-
-function DumbbellIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M4 9v6" />
-            <path d="M7 7v10" />
-            <path d="M17 7v10" />
-            <path d="M20 9v6" />
-            <line x1="7" y1="12" x2="17" y2="12" />
-        </svg>
-    )
-}
+import {workoutListApi} from "../api/workoutListApi.ts";
+import BarbellIcon from "../components/icons/BarbellIcon.tsx";
 
 function WorkoutsListPage() {
 
@@ -29,7 +18,7 @@ function WorkoutsListPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        workoutApi.getAll(1, 0, PAGE_SIZE).then((data) => {
+        workoutListApi.getAll(1, 0, PAGE_SIZE).then((data) => {
             setWorkouts(data);
             setHasMore(data.length === PAGE_SIZE);
             setPage(0)
@@ -92,7 +81,7 @@ function WorkoutsListPage() {
                 className="mx-5 mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl flex items-center gap-[13px] cursor-pointer"
             >
                 <div className="w-[42px] h-[42px] rounded-xl bg-accent/[0.14] flex items-center justify-center text-accent shrink-0">
-                    <DumbbellIcon />
+                    <BarbellIcon />
                 </div>
                 <div className="flex-1">
                     <div className="text-[14px] font-bold">Zoznam cvikov</div>
@@ -135,7 +124,7 @@ function WorkoutsListPage() {
             {hasMore && !loading &&(
                 <button className="mx-5 mt-4 p-4 bg-card border border-white/[0.07] font-bold rounded-2xl text-center cursor-pointer hover:bg-card-hover transition-all duration-150 hover:brightness-110 active:scale-[0.97]"
                 onClick={() => {
-                    workoutApi.getAll(1, page + 1, PAGE_SIZE).then((data) => {
+                    workoutListApi.getAll(1, page + 1, PAGE_SIZE).then((data) => {
                         setWorkouts([...workouts, ...data]);
                         setHasMore(data.length === PAGE_SIZE);
                         setPage(page + 1);

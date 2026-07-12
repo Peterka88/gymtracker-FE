@@ -4,7 +4,7 @@ import WorkoutRow from "../components/WorkoutRow.tsx";
 import BottomNav from "../components/BottomNav";
 import {useEffect, useState} from "react";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
-import {workoutApi} from "../api/workoutApi.ts";
+import {workoutListApi} from "../api/workoutListApi.ts";
 import {useNavigate} from "react-router-dom";
 
 function Dashboard() {
@@ -30,7 +30,7 @@ function Dashboard() {
 
 
     useEffect(() => {
-        workoutApi.getRecent(1, 3).then((data) => {
+        workoutListApi.getRecent(1, 3).then((data) => {
             setRecentWorkouts(data);
             setWorkoutsLoading(false);
         });

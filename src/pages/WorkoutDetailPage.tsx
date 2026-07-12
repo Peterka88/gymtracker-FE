@@ -5,15 +5,7 @@ import {fetchWorkoutSessionDetail} from "../api/workoutSessionDetailApi.ts";
 import WorkoutSummaryCard from "../components/WorkoutSummaryCard.tsx";
 import BottomNav from "../components/BottomNav.tsx";
 import {formatWorkoutDateTime} from "../utils/formatWorkoutDateTime.ts";
-
-function ClockIcon() {
-    return (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 3" />
-        </svg>
-    )
-}
+import ClockIcon from "../components/icons/ClockIcon.tsx";
 
 function WorkoutDetailPage() {
     const { id } = useParams<{id: string}>()
@@ -68,7 +60,7 @@ function WorkoutDetailPage() {
                     <div className="flex gap-2.5 px-5 pt-2">
                         <div className="flex-1 p-3 bg-card border border-white/[0.07] rounded-2xl">
                             <div className="flex items-center gap-1 text-text-muted text-[11px] font-semibold">
-                                <ClockIcon/>
+                                <ClockIcon size={12} />
                                 Trvanie
                             </div>
                             <div className="flex items-baseline gap-1">

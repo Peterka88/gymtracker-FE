@@ -1,27 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-
-function BarbellIcon() {
-    return (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M4 9v6" />
-            <path d="M7 7v10" />
-            <path d="M17 7v10" />
-            <path d="M20 9v6" />
-            <line x1="7" y1="12" x2="17" y2="12" />
-        </svg>
-    )
-}
-
-function DumbbellIcon() {
-    return (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="8" width="4" height="8" rx="1.5" />
-            <rect x="17" y="8" width="4" height="8" rx="1.5" />
-            <line x1="7" y1="12" x2="17" y2="12" strokeWidth="3" />
-        </svg>
-    )
-}
+import BarbellIcon from "../components/icons/BarbellIcon.tsx";
+import DumbbellIcon from "../components/icons/DumbbellIcon.tsx";
 
 function MachineIcon() {
     return (
@@ -59,8 +39,8 @@ function CableIcon() {
 }
 
 const equipmentIcons: Record<string, () => ReactNode> = {
-    'Činka': BarbellIcon,
-    'Jednoručky': DumbbellIcon,
+    'Činka': () => <BarbellIcon size={30} />,
+    'Jednoručky': () => <DumbbellIcon size={32} />,
     'Stroj': MachineIcon,
     'Vlastná váha': BodyweightIcon,
     'Kladka': CableIcon,
@@ -98,7 +78,7 @@ function AddExercisePage() {
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-primary text-xl cursor-pointer">‹</button>
                 <div className="text-[24px] font-extrabold">Nový cvik</div>
-                <button onClick={() => navigate('/workout')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-muted text-xl cursor-pointer">⨯</button>
+                <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-muted text-xl cursor-pointer">⨯</button>
             </div>
 
             <div className="flex flex-col items-center mt-8">
