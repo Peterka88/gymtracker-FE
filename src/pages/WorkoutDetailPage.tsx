@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
-import type { WorkoutSessionDetail } from "../types/WorkoutSessionDetail.ts";
+import type { WorkoutSessionDetail } from "../types/workout.ts";
 import {useEffect, useState} from "react";
-import {fetchWorkoutSessionDetail} from "../api/workoutSessionDetailApi.ts";
+import {workoutApi} from "../api/workoutApi.ts";
 import WorkoutSummaryCard from "../components/WorkoutSummaryCard.tsx";
 import BottomNav from "../components/BottomNav.tsx";
 import {formatWorkoutDateTime} from "../utils/formatWorkoutDateTime.ts";
@@ -14,7 +14,7 @@ function WorkoutDetailPage() {
     const [workoutDetail, setWorkoutDetail] = useState<WorkoutSessionDetail>()
 
     useEffect(() => {
-       fetchWorkoutSessionDetail(1, Number(id)).then((data => {
+       workoutApi.getById(Number(id)).then((data => {
            setWorkoutDetail(data)
        }));
     },[])

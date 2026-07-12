@@ -3,7 +3,7 @@ import WorkoutRow from "../components/WorkoutRow.tsx";
 import BottomNav from "../components/BottomNav";
 import {useEffect, useState} from "react";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
-import {workoutListApi} from "../api/workoutListApi.ts";
+import {workoutApi} from "../api/workoutApi.ts";
 import BarbellIcon from "../components/icons/BarbellIcon.tsx";
 
 function WorkoutsListPage() {
@@ -18,7 +18,7 @@ function WorkoutsListPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        workoutListApi.getAll(1, 0, PAGE_SIZE).then((data) => {
+        workoutApi.getAll(1, 0, PAGE_SIZE).then((data) => {
             setWorkouts(data);
             setHasMore(data.length === PAGE_SIZE);
             setPage(0)
@@ -124,7 +124,7 @@ function WorkoutsListPage() {
             {hasMore && !loading &&(
                 <button className="mx-5 mt-4 p-4 bg-card border border-white/[0.07] font-bold rounded-2xl text-center cursor-pointer hover:bg-card-hover transition-all duration-150 hover:brightness-110 active:scale-[0.97]"
                 onClick={() => {
-                    workoutListApi.getAll(1, page + 1, PAGE_SIZE).then((data) => {
+                    workoutApi.getAll(1, page + 1, PAGE_SIZE).then((data) => {
                         setWorkouts([...workouts, ...data]);
                         setHasMore(data.length === PAGE_SIZE);
                         setPage(page + 1);

@@ -1,4 +1,4 @@
-import type {SessionExercise} from "../types/WorkoutSessionDetail.ts";
+import type {SessionExercise} from "../types/workout.ts";
 import {formatSeries} from "../utils/formatSeries.ts";
 
 
