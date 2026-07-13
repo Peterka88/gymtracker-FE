@@ -50,7 +50,7 @@ function AddExerciseToWorkoutPage() {
 
 
     useEffect(() => {
-        fetchExercises(page, 10).then((data) => {
+        fetchExercises(page, 5).then((data) => {
             setExercises(data.content)
             setPage(page + 1)
             setPageInfo(data)
@@ -235,7 +235,7 @@ function AddExerciseToWorkoutPage() {
                 <button
                     className={"mx-5 mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl font-bold text-center cursor-pointer hover:bg-card-hover transition-all duration-150 hover:brightness-110 active:scale-[0.97]"}
                     onClick={() => {
-                        fetchExercises(page, 10).then((data) => {
+                        fetchExercises(page, 5).then((data) => {
                             setExercises((current) => [...current, ...data.content])
                             setPage(page+1)
                             setPageInfo(data)

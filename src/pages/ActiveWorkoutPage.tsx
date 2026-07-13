@@ -6,6 +6,7 @@ import type {SessionExercise, WorkoutSessionDetail, WorkoutSet} from "../types/w
 import ClockIcon from "../components/icons/ClockIcon.tsx";
 import BarbellIcon from "../components/icons/BarbellIcon.tsx";
 import {workoutApi} from "../api/workoutApi.ts";
+import TrashIcon from "../components/icons/TrashIcon.tsx";
 
 function PauseIcon() {
     return (
@@ -22,6 +23,23 @@ function PlayIcon() {
             <path d="M8 5.5v13l11-6.5z" />
         </svg>
     )
+}
+
+interface StoredTimer {
+    accumulatedSeconds: number
+    resumedAt: number | null
+}
+
+const timerStorageKey = (sessionId: string) => `activeWorkoutTimer:${sessionId}`;
+
+function loadTimer(sessionId: string): StoredTimer {
+    const raw = localStorage.getItem(timerStorageKey(sessionId));
+    if (raw) return JSON.parse(raw);
+    return { accumulatedSeconds: 0, resumedAt: Date.now() };
+}
+
+function saveTimer(sessionId: string, timer: StoredTimer) {
+    localStorage.setItem(timerStorageKey(sessionId), JSON.stringify(timer));
 }
 
 function formatElapsed(totalSeconds: number): string {
@@ -55,6 +73,9 @@ function ActiveWorkoutPage() {
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const [timerRunning, setTimerRunning] = useState(true);
     const creationStarted = useRef(false);
+    const timerRef = useRef<StoredTimer | null>(null);
+
+    const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
         if (id) {
@@ -84,13 +105,36 @@ function ActiveWorkoutPage() {
 
 
     useEffect(() => {
-        if (!timerRunning || !session?.startedAt) return;
-        const startMs = new Date(session.startedAt).getTime();
-        const update = () => setElapsedSeconds(Math.max(0, Math.floor((Date.now() - startMs) / 1000)));
+        if (!id) return;
+        const timer = loadTimer(id);
+        saveTimer(id, timer);
+        timerRef.current = timer;
+        setTimerRunning(timer.resumedAt !== null);
+    }, [id]);
+
+    useEffect(() => {
+        const update = () => {
+            const timer = timerRef.current;
+            if (!timer) return;
+            const runningSeconds = timer.resumedAt !== null ? (Date.now() - timer.resumedAt) / 1000 : 0;
+            setElapsedSeconds(Math.floor(timer.accumulatedSeconds + runningSeconds));
+        };
         update();
+        if (!timerRunning) return;
         const interval = setInterval(update, 1000);
         return () => clearInterval(interval);
-    }, [timerRunning, session?.startedAt]);
+    }, [timerRunning, id]);
+
+    function toggleTimer() {
+        const timer = timerRef.current;
+        if (!id || !timer) return;
+        const next: StoredTimer = timer.resumedAt !== null
+            ? { accumulatedSeconds: timer.accumulatedSeconds + (Date.now() - timer.resumedAt) / 1000, resumedAt: null }
+            : { accumulatedSeconds: timer.accumulatedSeconds, resumedAt: Date.now() };
+        timerRef.current = next;
+        saveTimer(id, next);
+        setTimerRunning(next.resumedAt !== null);
+    }
 
     const exercises = session?.sessionExercises ?? [];
 
@@ -173,7 +217,7 @@ function ActiveWorkoutPage() {
                             if (exercise.id !== exerciseId) return exercise;
                             return {
                                 ...exercise,
-                                workoutSets: exercise.workoutSets.filter((_, index) => index !== tempId)
+                                workoutSets: exercise.workoutSets.filter((set) => set.id !== tempId)
                             }
                         })
                     }
@@ -215,9 +259,26 @@ function ActiveWorkoutPage() {
                         className="text-[16px] font-extrabold text-center bg-transparent outline-none w-[170px]"
                     />
                 </div>
-                <button className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-muted text-base cursor-pointer">
-                    ⋯
-                </button>
+                <div className={"relative"}>
+                    <button
+                        onClick={() => setMenuOpen((open) => !open)}
+                        className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-base cursor-pointer">
+                        ⋯
+                    </button>
+
+                    {menuOpen && (
+                        <div className="absolute right-0 top-[46px] w-48 bg-card border border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
+                            <button onClick={() => {
+                                workoutApi.deleteWorkout(Number(id), 1)
+                                    .then(() => navigate("/workouts"))
+                            }}  className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer"
+                            >
+                                <TrashIcon size={14} />
+                                Zrušiť tréning
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mx-5">
@@ -235,7 +296,7 @@ function ActiveWorkoutPage() {
                             {formatElapsed(elapsedSeconds)}
                         </div>
                         <button
-                            onClick={() => setTimerRunning((running) => !running)}
+                            onClick={toggleTimer}
                             className="w-8 h-8 rounded-full bg-btn border border-white/10 flex items-center justify-center text-text-secondary cursor-pointer"
                         >
                             {timerRunning ? <PauseIcon /> : <PlayIcon />}
@@ -288,14 +349,20 @@ function ActiveWorkoutPage() {
                 </button>
             </div>
 
-            <div className="px-5 mt-2.5">
-                <button
-                    onClick={() => navigate('/workout')}
-                    className="w-full bg-red-500 text-on-accent rounded-2xl py-4 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
-                >
-                    Ukončiť tréning
-                </button>
-            </div>
+            { id && (
+                <div className="px-5 mt-2.5">
+                    <button
+                        onClick={() => {
+                            workoutApi.finishWorkout(Number(id), 1)
+                            navigate('/workouts')
+                            localStorage.removeItem(timerStorageKey(id))
+                        }}
+                        className="w-full bg-red-500 text-on-accent rounded-2xl py-4 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
+                    >
+                        Ukončiť tréning
+                    </button>
+                </div>
+            )}
 
             <BottomNav />
         </div>
