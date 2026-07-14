@@ -39,11 +39,18 @@ export const workoutApi = {
          return client.post<WorkoutSet>(`/workouts/exercises/${exerciseSessionId}/sets`, {weight, reps} , {params: {userId}})
             .then((res) => res.data)
     },
+    editSet: (weight: number, reps: number, setId: number, userId: number) => {
+        return client.put<WorkoutSet>(`/workout-sets/${setId}`, {weight, reps} ,{params: {userId}})
+            .then((res) => res.data)
+    },
     finishWorkout: (id: number, userId: number) => {
         client.post(`/workouts/${id}/finish`, {params: {userId}});
     },
     deleteWorkout: (id: number, userId: number) => {
         return client.delete(`/workouts/${id}`, {params: {userId}})
+    },
+    deleteSet: (id: number, userId: number) => {
+        return client.delete(`/workout-sets/${id}`, {params: {userId}})
     }
 }
 

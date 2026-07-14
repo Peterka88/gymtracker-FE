@@ -2,13 +2,15 @@ import Stepper from "./Stepper.tsx";
 import {useState} from "react";
 import type {UiSessionExercise, UiWorkoutSet} from "../pages/ActiveWorkoutPage.tsx";
 import {formatSeries} from "../utils/formatSeries.ts";
+import TrashIcon from "./icons/TrashIcon.tsx";
 
 
-function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }: {
+function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onNotesChange }: {
     exercise: UiSessionExercise
     onToggle: () => void
     onAddSet: (weight: number, reps: number) => void
-    onEditSet: (setIndex: number, weight: number, reps: number) => void
+    onEditSet: (setIndex: number, setId: number | null, weight: number, reps: number) => void
+    onDeleteSet: (setIndex: number, setId: number | null) => void
     onNotesChange: (note: string) => void
 }) {
     const hasPr = exercise.workoutSets.some((set) => set.pr);
@@ -19,6 +21,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
     const [draftReps, setDraftReps] = useState(lastSet?.reps ?? 0);
 
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingSetId, setEditingId] = useState<number | null>(null)
     const [editDraftWeight, setEditDraftWeight] = useState(0);
     const [editDraftReps, setEditDraftReps] = useState(0);
 
@@ -39,11 +42,19 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
         setEditingIndex(index);
         setEditDraftWeight(set.weight);
         setEditDraftReps(set.reps);
+        setEditingId(set.id)
     }
 
     function confirmEditSet() {
         if (editingIndex !== null) {
-            onEditSet(editingIndex, editDraftWeight, editDraftReps);
+            onEditSet(editingIndex, editingSetId, editDraftWeight, editDraftReps);
+        }
+        setEditingIndex(null);
+    }
+
+    function confirmDeleteSet() {
+        if (editingIndex !== null) {
+            onDeleteSet(editingIndex, editingSetId);
         }
         setEditingIndex(null);
     }
@@ -98,18 +109,26 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onNotesChange }
                                         <Stepper label="Váha (kg)" value={editDraftWeight} onChange={setEditDraftWeight} color="text-protein" />
                                         <Stepper label="Opakovania" value={editDraftReps} onChange={setEditDraftReps} color="text-fat" allowDecimals={false} />
                                     </div>
-                                    <button
-                                        onClick={confirmEditSet}
-                                        className="w-full mt-4 bg-accent text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
-                                    >
-                                        Uložiť sériu
-                                    </button>
+                                    <div className={"flex gap-2"}>
+                                        <button
+                                            onClick={confirmEditSet}
+                                            className="flex-1 mt-4 bg-accent text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
+                                        >
+                                            Uložiť sériu
+                                        </button>
+                                        <button
+                                            onClick={confirmDeleteSet}
+                                            className="flex w-12 justify-center items-center mt-4 bg-red-500 text-white text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer">
+                                            <TrashIcon size={20}/>
+                                        </button>
+                                    </div>
+
                                 </div>
                             ) : (
                                 <div
                                     key={ set.id }
                                     onClick={() => openEditSet(set, index)}
-                                    className={`grid grid-cols-3 items-center text-[13.5px] px-1 py-2 cursor-pointer rounded-lg ${
+                                    className={`grid grid-cols-3 items-center text-[13.5px] my-0.5 px-1 py-2 cursor-pointer rounded-lg ${
                                         set.pr
                                             ? 'bg-carbs/[0.16]'
                                             : ''

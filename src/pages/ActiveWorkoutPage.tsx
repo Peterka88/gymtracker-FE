@@ -103,7 +103,6 @@ function ActiveWorkoutPage() {
         }
     }, [id]);
 
-
     useEffect(() => {
         if (!id) return;
         const timer = loadTimer(id);
@@ -225,22 +224,100 @@ function ActiveWorkoutPage() {
         })
     }
 
-    function editSet(exerciseId: number, setIndex: number, weight: number, reps: number) {
+    function editSet(exerciseSessionId: number, editingIndex: number, setId: number | null, weight: number, reps: number) {
+        const previousSet = session?.sessionExercises
+            .find((exercise) => exercise.id === exerciseSessionId)
+            ?.workoutSets[editingIndex];
+
         setSession((current) => {
             if (!current) return current;
             return {
                 ...current,
                 sessionExercises: current.sessionExercises.map((exercise) => {
-                    if (exercise.id !== exerciseId) return exercise;
+                    if (exercise.id !== exerciseSessionId) return exercise;
                     return {
                         ...exercise,
                         workoutSets: exercise.workoutSets.map((set, index) =>
-                            index === setIndex ? { ...set, weight, reps } : set
+                            index === editingIndex ? { ...set, weight, reps } : set
                         ),
                     };
                 }),
             };
         });
+
+        if (setId !== null){
+            workoutApi.editSet(weight, reps, setId, 1).then((data)  => {
+                setSession((current) => {
+                    if (!current) return current;
+                    return {
+                        ...current,
+                        sessionExercises: current.sessionExercises.map((exercise) => {
+                            if (exercise.id !== exerciseSessionId) return exercise;
+                            return {
+                                ...exercise,
+                                workoutSets: exercise.workoutSets.map((set,index) =>
+                                    index === editingIndex ? { ...set, pr: data.pr } : set
+                                )
+                            }
+                        })
+                    }
+                })
+            }).catch(() => {
+                if (!previousSet) return;
+                setSession((current) => {
+                    if (!current) return current;
+                    return {
+                        ...current,
+                        sessionExercises: current.sessionExercises.map((exercise) => {
+                            if (exercise.id !== exerciseSessionId) return exercise;
+                            return {
+                                ...exercise,
+                                workoutSets: exercise.workoutSets.map((set, index) =>
+                                    index === editingIndex ? previousSet : set
+                                ),
+                            };
+                        }),
+                    };
+                });
+            })
+        }
+    }
+
+    function deleteSet(exerciseSessionId: number, deletingIndex: number, setId: number | null) {
+        const deletingSet = session?.sessionExercises
+            .find((exercise) => exercise.id === exerciseSessionId)?.workoutSets[deletingIndex]
+
+        setSession((current) => {
+            if (!current) return current;
+            return {
+                ...current,
+                sessionExercises: current.sessionExercises.map((exercise) => {
+                    if (exercise.id !== exerciseSessionId) return exercise;
+                    return {
+                        ...exercise,
+                        workoutSets: exercise.workoutSets.filter((_, index) => index !== deletingIndex)
+                    };
+                })
+            };
+        })
+
+        if (setId !== null) {
+            workoutApi.deleteSet(setId, 1).catch(() => {
+                if (!deletingSet) return;
+                setSession((current) => {
+                    if (!current) return current;
+                    return {
+                        ...current,
+                        sessionExercises: current.sessionExercises.map((exercise) => {
+                            if (exercise.id !== exerciseSessionId) return exercise;
+                            const workoutSets = [...exercise.workoutSets];
+                            workoutSets.splice(deletingIndex, 0, deletingSet);
+                            return { ...exercise, workoutSets };
+                        })
+                    };
+                });
+            });
+        }
     }
 
     return (
@@ -322,7 +399,8 @@ function ActiveWorkoutPage() {
                     exercise={exercise}
                     onToggle={() => toggleExpanded(exercise.id)}
                     onAddSet={(weight, reps) => addSet(exercise.id, weight, reps)}
-                    onEditSet={(setIndex, weight, reps) => editSet(exercise.id, setIndex, weight, reps)}
+                    onEditSet={(setIndex,setId,  weight, reps) => editSet(exercise.id, setIndex, setId, weight, reps)}
+                    onDeleteSet={(setIndex, setId) => deleteSet(exercise.id, setIndex, setId)}
                     onNotesChange={(note) => updateExerciseNote(exercise.id, note)}
                 />
             ))}
