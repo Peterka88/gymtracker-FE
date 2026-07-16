@@ -74,6 +74,7 @@ function ActiveWorkoutPage() {
     const [timerRunning, setTimerRunning] = useState(true);
     const creationStarted = useRef(false);
     const timerRef = useRef<StoredTimer | null>(null);
+    const nameBeforeEditRef = useRef('');
 
     const [menuOpen, setMenuOpen] = useState(false)
 
@@ -145,6 +146,11 @@ function ActiveWorkoutPage() {
         setSession((current) => (current ? { ...current, note } : current));
     }
 
+    function saveWorkoutNote(note: string) {
+        if (!session) return;
+        workoutApi.updateWorkoutNameOrNote(session.id, note, null).catch(() => {});
+    }
+
     function toggleExpanded(exerciseId: number) {
         setSession((current) => {
             if (!current) return current;
@@ -167,6 +173,10 @@ function ActiveWorkoutPage() {
                 ),
             };
         });
+    }
+
+    function saveExerciseNote(exerciseSessionId: number, note: string) {
+        workoutApi.updateExerciseNote(exerciseSessionId, note).catch(() => {});
     }
 
     //  záporné = pending, kladné = uložené
@@ -283,6 +293,21 @@ function ActiveWorkoutPage() {
         }
     }
 
+    function onNameFocus(name: string) {
+        nameBeforeEditRef.current = name;
+    }
+
+    function onNameBlur(name: string) {
+        if (!session) return;
+        const previousName = nameBeforeEditRef.current;
+
+        if (previousName === name) return;
+
+        workoutApi.updateWorkoutNameOrNote(session.id, null, name).catch(() => {
+            setSession((current) => (current ? { ...current, name: previousName } : current));
+        });
+    }
+
     function deleteSet(exerciseSessionId: number, deletingIndex: number, setId: number | null) {
         const deletingSet = session?.sessionExercises
             .find((exercise) => exercise.id === exerciseSessionId)?.workoutSets[deletingIndex]
@@ -332,6 +357,8 @@ function ActiveWorkoutPage() {
                 <div className="text-center">
                     <input
                         value={session?.name ?? ''}
+                        onFocus={(event) => onNameFocus(event.target.value)}
+                        onBlur={(event) => onNameBlur(event.target.value)}
                         onChange={(event) => updateWorkoutName(event.target.value)}
                         className="text-[16px] font-extrabold text-center bg-transparent outline-none w-[170px]"
                     />
@@ -401,6 +428,7 @@ function ActiveWorkoutPage() {
                     onAddSet={(weight, reps) => addSet(exercise.id, weight, reps)}
                     onEditSet={(setIndex,setId,  weight, reps) => editSet(exercise.id, setIndex, setId, weight, reps)}
                     onDeleteSet={(setIndex, setId) => deleteSet(exercise.id, setIndex, setId)}
+                    onNotesBlur={(note) => saveExerciseNote(exercise.id, note)}
                     onNotesChange={(note) => updateExerciseNote(exercise.id, note)}
                 />
             ))}
@@ -412,6 +440,7 @@ function ActiveWorkoutPage() {
                 <textarea
                     value={session?.note ?? ''}
                     onChange={(event) => updateWorkoutNote(event.target.value)}
+                    onBlur={(event) => saveWorkoutNote(event.target.value)}
                     placeholder="Ako prebiehal tréning?"
                     rows={3}
                     className="w-full bg-card border border-white/[0.07] rounded-2xl px-4 py-3 text-[13.5px] text-text-primary placeholder:text-text-faint outline-none resize-none"

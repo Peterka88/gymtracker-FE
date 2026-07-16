@@ -51,6 +51,15 @@ export const workoutApi = {
     },
     deleteSet: (id: number, userId: number) => {
         return client.delete(`/workout-sets/${id}`, {params: {userId}})
+    },
+    updateWorkoutNameOrNote: (workoutId: number, note: string | null, name: string | null, userId: number = 1) => {
+        var body = {}
+        if (note) body = {note}
+        if (name) body = {name}
+        return client.patch(`/workouts/${workoutId}`, body, {params: {userId}})
+    },
+    updateExerciseNote: (exerciseSessionId: number, note: string, userId: number = 1) => {
+        return client.patch(`/session-exercises/${exerciseSessionId}`, {note}, {params: {userId}})
     }
 }
 

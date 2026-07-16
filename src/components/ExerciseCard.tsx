@@ -5,13 +5,14 @@ import {formatSeries} from "../utils/formatSeries.ts";
 import TrashIcon from "./icons/TrashIcon.tsx";
 
 
-function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onNotesChange }: {
+function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onNotesChange, onNotesBlur }: {
     exercise: UiSessionExercise
     onToggle: () => void
     onAddSet: (weight: number, reps: number) => void
     onEditSet: (setIndex: number, setId: number | null, weight: number, reps: number) => void
     onDeleteSet: (setIndex: number, setId: number | null) => void
     onNotesChange: (note: string) => void
+    onNotesBlur: (note: string) => void
 }) {
     const hasPr = exercise.workoutSets.some((set) => set.pr);
     const lastSet = exercise.workoutSets[exercise.workoutSets.length - 1];
@@ -182,6 +183,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                         <textarea
                             value={exercise.note}
                             onChange={(event) => onNotesChange(event.target.value)}
+                            onBlur={(event) => onNotesBlur(event.target.value)}
                             placeholder="+ Pridať poznámku"
                             rows={2}
                             className="w-full mt-2.5 bg-btn border border-white/[0.07] rounded-lg px-3 py-2 text-[12.5px] text-text-primary placeholder:text-text-faint outline-none resize-none"
