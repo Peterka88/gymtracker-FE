@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
 import {workoutApi} from "../api/workoutApi.ts";
 import {useNavigate} from "react-router-dom";
+import {formatDayTime, formatTodayDate} from "../utils/formatDateTime.ts";
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -40,8 +41,8 @@ function Dashboard() {
         <div className="flex flex-col min-h-screen pb-28">
             <div className="flex items-center justify-between px-[22px] pt-1.5 pb-2">
                 <div>
-                    <div className="text-text-muted text-[13px]">Nedeľa, 28. júna</div>
-                    <div className="text-[23px] font-extrabold mt-0.5">Dobré ráno, Denis</div>
+                    <div className="text-text-muted text-[13px]">{formatTodayDate()}</div>
+                    <div className="text-[23px] font-extrabold mt-0.5">{formatDayTime()}, {localStorage.getItem('name')}</div>
                 </div>
                 <div className="w-[42px] h-[42px] rounded-full bg-card border border-white/10" />
             </div>
@@ -67,7 +68,7 @@ function Dashboard() {
                 </button>
             </div>
             {workoutsLoading ? (
-                <div className="mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
+                <div className="h-35 flex justify-center mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
                     <div className="flex items-center justify-center gap-1.5 py-6">
                         <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.3s]" />
                         <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.15s]" />

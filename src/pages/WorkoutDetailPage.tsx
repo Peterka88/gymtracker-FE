@@ -5,7 +5,7 @@ import {workoutApi} from "../api/workoutApi.ts";
 import {useToast} from "../context/ToastContext.tsx";
 import WorkoutSummaryCard from "../components/WorkoutSummaryCard.tsx";
 import BottomNav from "../components/BottomNav.tsx";
-import {formatWorkoutDateTime} from "../utils/formatWorkoutDateTime.ts";
+import {formatWorkoutDateTime} from "../utils/formatDateTime.ts";
 import ClockIcon from "../components/icons/ClockIcon.tsx";
 import TrashIcon from "../components/icons/TrashIcon.tsx";
 
