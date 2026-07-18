@@ -13,3 +13,13 @@ client.interceptors.request.use((config) => {
   }
   return config
 })
+
+client.interceptors.response.use(
+    (res) => res,
+    (err) => {
+      if (err.response?.status === 401) {
+        localStorage.removeItem(TOKEN_KEY)
+        window.location.href = '/'
+      }
+      return Promise.reject(err)
+    })
