@@ -8,6 +8,7 @@ import BottomNav from "../components/BottomNav.tsx";
 import {formatWorkoutDateTime} from "../utils/formatDateTime.ts";
 import ClockIcon from "../components/icons/ClockIcon.tsx";
 import TrashIcon from "../components/icons/TrashIcon.tsx";
+import ConfirmDialog from "../components/ConfirmDialog.tsx";
 
 function WorkoutDetailPage() {
     const { id } = useParams<{id: string}>()
@@ -16,6 +17,7 @@ function WorkoutDetailPage() {
 
     const [workoutDetail, setWorkoutDetail] = useState<WorkoutSessionDetail>()
     const [menuOpen, setMenuOpen] = useState(false)
+    const [confirmDelete, setConfirmDelete] = useState(false)
 
     useEffect(() => {
        workoutApi.getById(Number(id), { skipErrorToast: true })
@@ -48,8 +50,8 @@ function WorkoutDetailPage() {
                         <div className="absolute right-0 top-[46px] w-48 bg-card border border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
                             <button
                                 onClick={() => {
-                                    workoutApi.deleteWorkout(Number(id))
-                                        .then(() => navigate("/workouts"))
+                                    setMenuOpen(false)
+                                    setConfirmDelete(true)
                                 }}
                                 className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer"
                             >
@@ -121,6 +123,19 @@ function WorkoutDetailPage() {
                     </div>
                 </>
             )}
+
+            {confirmDelete && <ConfirmDialog
+                    title={"Vymazať tréning"}
+                    description={"Naozaj chcete vymazať tento tréning?"}
+                    onConfirm={() => {
+                        workoutApi.deleteWorkout(Number(id))
+                            .then(() => navigate("/workouts"))
+                    }}
+                    onCancel={() => setConfirmDelete(false)}
+                    confirmLabel={"Vymazať"}
+                    cancelLabel={"Zavrieť"}
+                    confirmColor={"red"} />
+                    }
 
             <BottomNav/>
         </div>
