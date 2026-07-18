@@ -11,15 +11,15 @@ function HomeIcon() {
     )
 }
 
-function DiaryIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="6" y1="8" x2="18" y2="8" />
-            <line x1="6" y1="12" x2="18" y2="12" />
-            <line x1="6" y1="16" x2="14" y2="16" />
-        </svg>
-    )
-}
+// function DiaryIcon() {
+//     return (
+//         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+//             <line x1="6" y1="8" x2="18" y2="8" />
+//             <line x1="6" y1="12" x2="18" y2="12" />
+//             <line x1="6" y1="16" x2="14" y2="16" />
+//         </svg>
+//     )
+// }
 
 function WorkoutIcon() {
     return (
@@ -33,15 +33,15 @@ function WorkoutIcon() {
     )
 }
 
-function StatsIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="6" y1="20" x2="6" y2="13" />
-            <line x1="12" y1="20" x2="12" y2="6" />
-            <line x1="18" y1="20" x2="18" y2="10" />
-        </svg>
-    )
-}
+// function StatsIcon() {
+//     return (
+//         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+//             <line x1="6" y1="20" x2="6" y2="13" />
+//             <line x1="12" y1="20" x2="12" y2="6" />
+//             <line x1="18" y1="20" x2="18" y2="10" />
+//         </svg>
+//     )
+// }
 
 function CameraIcon() {
     return (
@@ -169,9 +169,9 @@ function BottomNav() {
                         <NavTab to="/dashboard" label="Domov">
                             <HomeIcon />
                         </NavTab>
-                        <NavTab to="/diary" label="Denník">
-                            <DiaryIcon />
-                        </NavTab>
+                        {/*<NavTab to="/diary" label="Denník">*/}
+                        {/*    <DiaryIcon />*/}
+                        {/*</NavTab>*/}
                     </div>
 
                     <div className="w-14 shrink-0" />
@@ -180,9 +180,9 @@ function BottomNav() {
                         <NavTab to="/workouts" label="Tréning">
                             <WorkoutIcon />
                         </NavTab>
-                        <NavTab to="/stats" label="Štatistiky">
-                            <StatsIcon />
-                        </NavTab>
+                        {/*<NavTab to="/stats" label="Štatistiky">*/}
+                        {/*    <StatsIcon />*/}
+                        {/*</NavTab>*/}
                     </div>
 
                     <button
