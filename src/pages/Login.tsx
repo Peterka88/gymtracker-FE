@@ -1,10 +1,12 @@
 import { useState, type SubmitEvent, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { authApi } from '../api/authApi'
 
-function MailIcon() {
+function UserIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A8A92" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="5" width="18" height="14" rx="3" />
-      <path d="M3 7l9 6 9-6" />
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
     </svg>
   )
 }
@@ -30,13 +32,25 @@ function GoogleIcon() {
 }
 
 function Login() {
-  const [email, setEmail] = useState('')
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
-    // TODO: zavolat auth API
+    setError('')
+    setIsSubmitting(true)
+    try {
+      await authApi.login(username, password)
+      navigate('/dashboard')
+    } catch {
+      setError('Nesprávny e-mail alebo heslo')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -53,13 +67,13 @@ function Login() {
 
       <form onSubmit={handleSubmit} className="px-7 pt-[34px] flex flex-col gap-4">
         <div>
-          <div className="text-text-muted text-[11.5px] font-bold mb-2 pl-0.5">E-mail</div>
+          <div className="text-text-muted text-[11.5px] font-bold mb-2 pl-0.5">Username</div>
           <div className="flex items-center gap-[11px] bg-chip border border-white/[0.08] rounded-[14px] px-4 py-3.5">
-            <MailIcon />
+            <UserIcon />
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="flex-1 bg-transparent outline-none text-[14.5px] text-text-primary placeholder:text-text-faint"
             />
           </div>
@@ -89,7 +103,13 @@ function Login() {
           <span className="text-text-muted text-[12.5px] font-semibold">Zabudnuté heslo?</span>
         </div>
 
-        <PrimaryButtonInline type="submit">Prihlásiť sa</PrimaryButtonInline>
+        {error && (
+          <p className="text-red-400 text-[12.5px] font-semibold text-center">{error}</p>
+        )}
+
+        <PrimaryButtonInline type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Prihlasujem...' : 'Prihlásiť sa'}
+        </PrimaryButtonInline>
       </form>
 
       <div className="px-7">
@@ -117,14 +137,17 @@ function Login() {
 function PrimaryButtonInline({
   children,
   type = 'button',
+  disabled = false,
 }: {
   children: ReactNode
   type?: 'button' | 'submit'
+  disabled?: boolean
 }) {
   return (
     <button
       type={type}
-      className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97]"
+      disabled={disabled}
+      className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] disabled:opacity-60 disabled:active:scale-100"
     >
       {children}
     </button>
