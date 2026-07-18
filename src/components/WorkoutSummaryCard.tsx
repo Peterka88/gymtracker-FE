@@ -24,7 +24,7 @@ function WorkoutSummaryCard(exercise: SessionExercise) {
                 </div>
 
                 { exercise.workoutSets.map((set, i) => (
-                    <div key={set.id} className={`grid grid-cols-3 items-center text-[13.5px] px-1 py-1 rounded-lg
+                    <div key={set.id} className={`grid grid-cols-3 items-center text-[13.5px] my-0.5 px-1 py-1 rounded-lg
                         ${set.pr ? 'bg-carbs/[0.16] text-carbs font-extrabold' : ''}`}>
                         <span className="flex items-center justify-center gap-1">
                             {i+1}

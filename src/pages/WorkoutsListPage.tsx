@@ -91,12 +91,10 @@ function WorkoutsListPage() {
             </div>
 
             {loading && (
-                <div className="mt-5 mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
-                    <div className="flex items-center justify-center gap-1.5 py-6">
-                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.3s]" />
-                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.15s]" />
-                        <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce" />
-                    </div>
+                <div className="flex-1 flex items-center justify-center gap-1.5 py-6">
+                    <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.3s]" />
+                    <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce [animation-delay:-0.15s]" />
+                    <span className="w-2 h-2 rounded-full bg-text-muted animate-bounce" />
                 </div>
             )}
 

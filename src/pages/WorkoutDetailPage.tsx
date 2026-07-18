@@ -6,12 +6,14 @@ import WorkoutSummaryCard from "../components/WorkoutSummaryCard.tsx";
 import BottomNav from "../components/BottomNav.tsx";
 import {formatWorkoutDateTime} from "../utils/formatWorkoutDateTime.ts";
 import ClockIcon from "../components/icons/ClockIcon.tsx";
+import TrashIcon from "../components/icons/TrashIcon.tsx";
 
 function WorkoutDetailPage() {
     const { id } = useParams<{id: string}>()
     const navigate = useNavigate()
 
     const [workoutDetail, setWorkoutDetail] = useState<WorkoutSessionDetail>()
+    const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
        workoutApi.getById(Number(id)).then((data => {
@@ -30,9 +32,28 @@ function WorkoutDetailPage() {
                     className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 justify-center text-xl cursor-pointer"
                     onClick={() => navigate(-1)}>‹</button>
                 <div className="text-[16px] font-extrabold">Workout Detail</div>
-                <button className="w-[38px] h-[38px] rounded-full text-base bg-btn border text-text-muted border-white/8 justify-center cursor-pointer">
-                    ⋯
-                </button>
+                <div className={"relative"}>
+                    <button
+                        onClick={() => setMenuOpen((open) => !open)}
+                        className="w-[38px] h-[38px] rounded-full text-base bg-btn border text-text-primary border-white/8 justify-center cursor-pointer">
+                        ⋯
+                    </button>
+                    { menuOpen && (
+                        <div className="absolute right-0 top-[46px] w-48 bg-card border border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
+                            <button
+                                onClick={() => {
+                                    workoutApi.deleteWorkout(Number(id))
+                                        .then(() => navigate("/workouts"))
+                                }}
+                                className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer"
+                            >
+                                <TrashIcon size={14} />
+                                Vymazať tréning
+                            </button>
+                        </div>
+                    )}
+                </div>
+
             </div>
 
             { !workoutDetail ? (

@@ -47,7 +47,7 @@ function Login() {
       await authApi.login(username, password)
       navigate('/dashboard')
     } catch {
-      setError('Nesprávny e-mail alebo heslo')
+      setError('Nesprávny username alebo heslo')
     } finally {
       setIsSubmitting(false)
     }

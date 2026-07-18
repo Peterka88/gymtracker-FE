@@ -373,7 +373,7 @@ function ActiveWorkoutPage() {
                     {menuOpen && (
                         <div className="absolute right-0 top-[46px] w-48 bg-card border border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
                             <button onClick={() => {
-                                workoutApi.deleteWorkout(Number(id), 1)
+                                workoutApi.deleteWorkout(Number(id))
                                     .then(() => navigate("/workouts"))
                             }}  className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer"
                             >

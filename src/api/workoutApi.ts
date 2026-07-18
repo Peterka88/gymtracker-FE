@@ -46,8 +46,8 @@ export const workoutApi = {
     finishWorkout: (id: number, userId: number) => {
         client.post(`/workouts/${id}/finish`, {params: {userId}});
     },
-    deleteWorkout: (id: number, userId: number) => {
-        return client.delete(`/workouts/${id}`, {params: {userId}})
+    deleteWorkout: (id: number) => {
+        return client.delete(`/workouts/${id}`)
     },
     deleteSet: (id: number, userId: number) => {
         return client.delete(`/workout-sets/${id}`, {params: {userId}})
