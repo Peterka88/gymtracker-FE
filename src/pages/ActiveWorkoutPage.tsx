@@ -79,6 +79,7 @@ function ActiveWorkoutPage() {
 
     const [menuOpen, setMenuOpen] = useState(false)
     const [deleteSessionDialog, setDeleteSessionDialog] = useState(false)
+    const [endSessionDialog, setEndSessionDialog] = useState(false)
 
     useEffect(() => {
         if (id) {
@@ -480,11 +481,7 @@ function ActiveWorkoutPage() {
             { id && (
                 <div className="px-5 mt-2.5">
                     <button
-                        onClick={() => {
-                            workoutApi.finishWorkout(Number(id))
-                            navigate('/workouts')
-                            localStorage.removeItem(timerStorageKey(id))
-                        }}
+                        onClick={() => setEndSessionDialog(true)}
                         className="w-full bg-red-500 text-on-accent rounded-2xl py-4 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
                     >
                         Ukončiť tréning
@@ -501,6 +498,20 @@ function ActiveWorkoutPage() {
                     .then(() => navigate("/workouts"))}
                 onCancel={() => setDeleteSessionDialog(false)}
                 confirmLabel={"Vymazať"}
+                cancelLabel={"Zavrieť"}
+                confirmColor={"red"} />
+                }
+
+                {endSessionDialog && id && <ConfirmDialog
+                title={"Ukončiť tréning?"}
+                description={"Naozaj chcete ukončiť tréning?"}
+                onConfirm={() => {
+                    workoutApi.finishWorkout(Number(id))
+                    navigate('/workouts')
+                    localStorage.removeItem(timerStorageKey(id))
+                }}
+                onCancel={() => setEndSessionDialog(false)}
+                confirmLabel={"Ukončiť"}
                 cancelLabel={"Zavrieť"}
                 confirmColor={"red"} />
                 }
