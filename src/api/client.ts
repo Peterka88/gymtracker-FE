@@ -1,4 +1,11 @@
 import axios from 'axios'
+import { notifyError } from '../context/ToastContext.tsx'
+
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    skipErrorToast?: boolean
+  }
+}
 
 export const TOKEN_KEY = 'authToken'
 
@@ -20,6 +27,8 @@ client.interceptors.response.use(
       if (err.response?.status === 403) {
         localStorage.removeItem(TOKEN_KEY)
         window.location.href = '/'
+      } else if (!err.config?.skipErrorToast) {
+        notifyError('Niečo sa pokazilo.')
       }
       return Promise.reject(err)
     })

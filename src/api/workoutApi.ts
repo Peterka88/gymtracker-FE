@@ -1,4 +1,5 @@
 import {client} from "./client.ts";
+import type {AxiosRequestConfig} from "axios";
 import type {WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
 
 interface WorkoutApiResponse {
@@ -24,8 +25,8 @@ export const workoutApi = {
         return client.get<WorkoutApiResponse[]>('/workouts', {params: {page, size}})
             .then((res) => res.data.map(toWorkoutRowProps))
     },
-    getById: (id: number) => {
-        return client.get<WorkoutSessionDetail>(`/workouts/${id}`)
+    getById: (id: number, config?: AxiosRequestConfig) => {
+        return client.get<WorkoutSessionDetail>(`/workouts/${id}`, config)
             .then((res) => res.data)
     },
     create: () => {

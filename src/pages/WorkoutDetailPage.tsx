@@ -2,6 +2,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import type { WorkoutSessionDetail } from "../types/workout.ts";
 import {useEffect, useState} from "react";
 import {workoutApi} from "../api/workoutApi.ts";
+import {useToast} from "../context/ToastContext.tsx";
 import WorkoutSummaryCard from "../components/WorkoutSummaryCard.tsx";
 import BottomNav from "../components/BottomNav.tsx";
 import {formatWorkoutDateTime} from "../utils/formatWorkoutDateTime.ts";
@@ -11,14 +12,19 @@ import TrashIcon from "../components/icons/TrashIcon.tsx";
 function WorkoutDetailPage() {
     const { id } = useParams<{id: string}>()
     const navigate = useNavigate()
+    const { showError } = useToast()
 
     const [workoutDetail, setWorkoutDetail] = useState<WorkoutSessionDetail>()
     const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
-       workoutApi.getById(Number(id)).then((data => {
+       workoutApi.getById(Number(id), { skipErrorToast: true })
+           .then((data => {
            setWorkoutDetail(data)
-       }));
+       })).catch(() => {
+           showError("Tréning sa nenašiel")
+           navigate("/workouts")
+       });
     },[])
 
     const prCount = workoutDetail?.sessionExercises
