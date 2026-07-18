@@ -366,7 +366,17 @@ function ActiveWorkoutPage() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen pb-28">
+        <div className="relative flex flex-col min-h-screen pb-56">
+            {!session && (
+                <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 bg-bg/75 backdrop-blur-sm">
+                    <div className="text-accent animate-bounce">
+                        <BarbellIcon size={36} />
+                    </div>
+                    <div className="text-text-muted text-[13px]">
+                        { !id ? "Vytváram tréning" : "Načítavam tréning" }
+                    </div>
+                </div>
+            )}
             <div className="flex items-center justify-between px-5 pt-1.5 pb-3">
                 <button
                     onClick={() => navigate('/dashboard')}
@@ -469,30 +479,28 @@ function ActiveWorkoutPage() {
                 />
             </div>
 
-            <div className="px-5 mt-4">
+            <div className="fixed bottom-24 left-0 right-0 max-w-[430px] mx-auto z-20 px-5 flex flex-col gap-2.5">
                 <button
                     onClick={() => navigate(`/workouts/${session?.id}/add-exercise`)}
-                    className="w-full py-3.5 rounded-2xl border border-dashed border-white/[0.18] text-text-secondary text-[13.5px] font-bold cursor-pointer"
+                    className="w-full py-3.5 rounded-2xl border border-dashed border-white/[0.18] bg-bg text-text-secondary text-[13.5px] font-bold cursor-pointer"
                 >
                     + Pridať cvik
                 </button>
-            </div>
 
-            { id && (
-                <div className="px-5 mt-2.5">
+                { id && (
                     <button
                         onClick={() => setEndSessionDialog(true)}
                         className="w-full bg-red-500 text-on-accent rounded-2xl py-4 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
                     >
                         Ukončiť tréning
                     </button>
-                </div>
-            )}
+                )}
+            </div>
 
             <BottomNav />
 
             {deleteSessionDialog && <ConfirmDialog
-                title={"Vymazať tréning?"}
+                title={"Vymazať tréning"}
                 description={"Naozaj chcete vymazať aktívny tréning?"}
                 onConfirm={() => workoutApi.deleteWorkout(Number(id))
                     .then(() => navigate("/workouts"))}
@@ -503,7 +511,7 @@ function ActiveWorkoutPage() {
                 }
 
                 {endSessionDialog && id && <ConfirmDialog
-                title={"Ukončiť tréning?"}
+                title={"Ukončiť tréning"}
                 description={"Naozaj chcete ukončiť tréning?"}
                 onConfirm={() => {
                     workoutApi.finishWorkout(Number(id))
