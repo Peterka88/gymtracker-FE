@@ -13,7 +13,7 @@ import ConfirmDialog from "../components/ConfirmDialog.tsx";
 function WorkoutDetailPage() {
     const { id } = useParams<{id: string}>()
     const navigate = useNavigate()
-    const { showError } = useToast()
+    const { showError, showSuccess } = useToast()
 
     const [workoutDetail, setWorkoutDetail] = useState<WorkoutSessionDetail>()
     const [menuOpen, setMenuOpen] = useState(false)
@@ -129,7 +129,10 @@ function WorkoutDetailPage() {
                     description={"Naozaj chcete vymazať tento tréning?"}
                     onConfirm={() => {
                         workoutApi.deleteWorkout(Number(id))
-                            .then(() => navigate("/workouts"))
+                            .then(() => {
+                                navigate("/workouts")
+                                showSuccess("Tréning vymazaný")
+                            })
                     }}
                     onCancel={() => setConfirmDelete(false)}
                     confirmLabel={"Vymazať"}
