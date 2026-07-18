@@ -30,7 +30,7 @@ function Dashboard() {
 
 
     useEffect(() => {
-        workoutApi.getRecent(1, 3).then((data) => {
+        workoutApi.getRecent(3).then((data) => {
             setRecentWorkouts(data);
             setWorkoutsLoading(false);
         });

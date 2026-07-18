@@ -80,7 +80,7 @@ function ActiveWorkoutPage() {
 
     useEffect(() => {
         if (id) {
-            workoutApi.getById(Number(id), 1).then((data) => {
+            workoutApi.getById(Number(id)).then((data) => {
                 setSession({
                     ...data,
                     sessionExercises: data.sessionExercises.map((exercise) => ({
@@ -92,7 +92,7 @@ function ActiveWorkoutPage() {
         } else {
             if (creationStarted.current) return;
             creationStarted.current = true;
-            workoutApi.create(1).then(data => {
+            workoutApi.create().then(data => {
                 setSession({
                     ...data,
                     duration: 0,
@@ -197,7 +197,7 @@ function ActiveWorkoutPage() {
             };
         });
 
-        workoutApi.addSet(weight, reps, exerciseId, 1)
+        workoutApi.addSet(weight, reps, exerciseId)
             .then((data) => {
                 setSession((current) => {
                     if (!current) return current;
@@ -256,7 +256,7 @@ function ActiveWorkoutPage() {
         });
 
         if (setId !== null){
-            workoutApi.editSet(weight, reps, setId, 1).then((data)  => {
+            workoutApi.editSet(weight, reps, setId).then((data)  => {
                 setSession((current) => {
                     if (!current) return current;
                     return {
@@ -327,7 +327,7 @@ function ActiveWorkoutPage() {
         })
 
         if (setId !== null) {
-            workoutApi.deleteSet(setId, 1).catch(() => {
+            workoutApi.deleteSet(setId).catch(() => {
                 if (!deletingSet) return;
                 setSession((current) => {
                     if (!current) return current;
@@ -460,7 +460,7 @@ function ActiveWorkoutPage() {
                 <div className="px-5 mt-2.5">
                     <button
                         onClick={() => {
-                            workoutApi.finishWorkout(Number(id), 1)
+                            workoutApi.finishWorkout(Number(id))
                             navigate('/workouts')
                             localStorage.removeItem(timerStorageKey(id))
                         }}

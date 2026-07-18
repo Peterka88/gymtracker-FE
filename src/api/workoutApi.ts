@@ -16,50 +16,50 @@ interface WorkoutSessionNewResponse {
 }
 
 export const workoutApi = {
-    getRecent: (userId = 1, size = 3) => {
-        return client.get<WorkoutApiResponse[]>('/workouts', {params: {userId, size}})
+    getRecent: (size = 3) => {
+        return client.get<WorkoutApiResponse[]>('/workouts', {params: {size}})
             .then((res) => res.data.map(toWorkoutRowProps))
     },
-    getAll: (userId = 1, page = 0, size = 10) => {
-        return client.get<WorkoutApiResponse[]>('/workouts', {params: {userId, page, size}})
+    getAll: (page = 0, size = 10) => {
+        return client.get<WorkoutApiResponse[]>('/workouts', {params: {page, size}})
             .then((res) => res.data.map(toWorkoutRowProps))
     },
-    getById: (id: number, userId: number = 1) => {
-        return client.get<WorkoutSessionDetail>(`/workouts/${id}`, {params: {userId}})
+    getById: (id: number) => {
+        return client.get<WorkoutSessionDetail>(`/workouts/${id}`)
             .then((res) => res.data)
     },
-    create: (userId: number = 1) => {
-        return client.post<WorkoutSessionNewResponse>('/workouts', null, {params: {userId}})
+    create: () => {
+        return client.post<WorkoutSessionNewResponse>('/workouts', null)
             .then((res) => res.data)
     },
-    addExercise: async (sessionId: number, exerciseIds: number[], userId: number) => {
-        await client.post(`/workouts/${sessionId}/exercises`, {exerciseIds}, {params: {userId}});
+    addExercise: async (sessionId: number, exerciseIds: number[]) => {
+        await client.post(`/workouts/${sessionId}/exercises`, {exerciseIds});
     },
-    addSet: (weight: number, reps: number ,exerciseSessionId: number, userId: number)=> {
-         return client.post<WorkoutSet>(`/workouts/exercises/${exerciseSessionId}/sets`, {weight, reps} , {params: {userId}})
+    addSet: (weight: number, reps: number ,exerciseSessionId: number)=> {
+         return client.post<WorkoutSet>(`/workouts/exercises/${exerciseSessionId}/sets`, {weight, reps})
             .then((res) => res.data)
     },
-    editSet: (weight: number, reps: number, setId: number, userId: number) => {
-        return client.put<WorkoutSet>(`/workout-sets/${setId}`, {weight, reps} ,{params: {userId}})
+    editSet: (weight: number, reps: number, setId: number) => {
+        return client.put<WorkoutSet>(`/workout-sets/${setId}`, {weight, reps})
             .then((res) => res.data)
     },
-    finishWorkout: (id: number, userId: number) => {
-        client.post(`/workouts/${id}/finish`, {params: {userId}});
+    finishWorkout: (id: number) => {
+        client.post(`/workouts/${id}/finish`);
     },
     deleteWorkout: (id: number) => {
         return client.delete(`/workouts/${id}`)
     },
-    deleteSet: (id: number, userId: number) => {
-        return client.delete(`/workout-sets/${id}`, {params: {userId}})
+    deleteSet: (id: number) => {
+        return client.delete(`/workout-sets/${id}`)
     },
-    updateWorkoutNameOrNote: (workoutId: number, note: string | null, name: string | null, userId: number = 1) => {
+    updateWorkoutNameOrNote: (workoutId: number, note: string | null, name: string | null) => {
         var body = {}
         if (note) body = {note}
         if (name) body = {name}
-        return client.patch(`/workouts/${workoutId}`, body, {params: {userId}})
+        return client.patch(`/workouts/${workoutId}`, body)
     },
-    updateExerciseNote: (exerciseSessionId: number, note: string, userId: number = 1) => {
-        return client.patch(`/session-exercises/${exerciseSessionId}`, {note}, {params: {userId}})
+    updateExerciseNote: (exerciseSessionId: number, note: string) => {
+        return client.patch(`/session-exercises/${exerciseSessionId}`, {note})
     }
 }
 

@@ -250,7 +250,7 @@ function AddExerciseToWorkoutPage() {
             <div className="px-5 mt-6">
                 <button
                     disabled={selectedExercises.length === 0}
-                    onClick={() => workoutApi.addExercise(Number(id), selectedIds, 1).then(
+                    onClick={() => workoutApi.addExercise(Number(id), selectedIds).then(
                             () => navigate(`/workouts/${id}/active`))}
 
                     className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer
