@@ -7,6 +7,7 @@ import ClockIcon from "../components/icons/ClockIcon.tsx";
 import BarbellIcon from "../components/icons/BarbellIcon.tsx";
 import {workoutApi} from "../api/workoutApi.ts";
 import TrashIcon from "../components/icons/TrashIcon.tsx";
+import ConfirmDialog from "../components/ConfirmDialog.tsx";
 
 function PauseIcon() {
     return (
@@ -77,6 +78,7 @@ function ActiveWorkoutPage() {
     const nameBeforeEditRef = useRef('');
 
     const [menuOpen, setMenuOpen] = useState(false)
+    const [deleteSessionDialog, setDeleteSessionDialog] = useState(false)
 
     useEffect(() => {
         if (id) {
@@ -345,6 +347,23 @@ function ActiveWorkoutPage() {
         }
     }
 
+    function deleteExercise(exerciseId: number) {
+        const previousExercises = session?.sessionExercises;
+
+        setSession((current) => {
+            if (!current) return current;
+            return {
+                ...current,
+                sessionExercises: current.sessionExercises.filter((exercise) => exercise.id !== exerciseId)
+            };
+        });
+
+        workoutApi.deleteExercise(exerciseId).catch(() => {
+            if (!previousExercises) return;
+            setSession((current) => (current ? { ...current, sessionExercises: previousExercises } : current));
+        });
+    }
+
     return (
         <div className="flex flex-col min-h-screen pb-28">
             <div className="flex items-center justify-between px-5 pt-1.5 pb-3">
@@ -373,9 +392,10 @@ function ActiveWorkoutPage() {
                     {menuOpen && (
                         <div className="absolute right-0 top-[46px] w-48 bg-card border border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
                             <button onClick={() => {
-                                workoutApi.deleteWorkout(Number(id))
-                                    .then(() => navigate("/workouts"))
-                            }}  className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer"
+                                setDeleteSessionDialog(true)
+                                setMenuOpen(false)
+                            }}
+                                    className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer"
                             >
                                 <TrashIcon size={14} />
                                 Zrušiť tréning
@@ -428,6 +448,7 @@ function ActiveWorkoutPage() {
                     onAddSet={(weight, reps) => addSet(exercise.id, weight, reps)}
                     onEditSet={(setIndex,setId,  weight, reps) => editSet(exercise.id, setIndex, setId, weight, reps)}
                     onDeleteSet={(setIndex, setId) => deleteSet(exercise.id, setIndex, setId)}
+                    onDeleteExercise={() => deleteExercise(exercise.id)}
                     onNotesBlur={(note) => saveExerciseNote(exercise.id, note)}
                     onNotesChange={(note) => updateExerciseNote(exercise.id, note)}
                 />
@@ -472,6 +493,17 @@ function ActiveWorkoutPage() {
             )}
 
             <BottomNav />
+
+            {deleteSessionDialog && <ConfirmDialog
+                title={"Vymazať tréning?"}
+                description={"Naozaj chcete vymazať aktívny tréning?"}
+                onConfirm={() => workoutApi.deleteWorkout(Number(id))
+                    .then(() => navigate("/workouts"))}
+                onCancel={() => setDeleteSessionDialog(false)}
+                confirmLabel={"Vymazať"}
+                cancelLabel={"Zavrieť"}
+                confirmColor={"red"} />
+                }
         </div>
     )
 }

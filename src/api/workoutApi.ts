@@ -61,6 +61,9 @@ export const workoutApi = {
     },
     updateExerciseNote: (exerciseSessionId: number, note: string) => {
         return client.patch(`/session-exercises/${exerciseSessionId}`, {note})
+    },
+    deleteExercise: (exerciseSessionId: number) => {
+        return client.delete(`/session-exercises/${exerciseSessionId}`)
     }
 }
 

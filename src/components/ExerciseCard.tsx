@@ -3,14 +3,16 @@ import {useState} from "react";
 import type {UiSessionExercise, UiWorkoutSet} from "../pages/ActiveWorkoutPage.tsx";
 import {formatSeries} from "../utils/formatSeries.ts";
 import TrashIcon from "./icons/TrashIcon.tsx";
+import ConfirmDialog from "./ConfirmDialog.tsx";
 
 
-function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onNotesChange, onNotesBlur }: {
+function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onDeleteExercise, onNotesChange, onNotesBlur }: {
     exercise: UiSessionExercise
     onToggle: () => void
     onAddSet: (weight: number, reps: number) => void
     onEditSet: (setIndex: number, setId: number | null, weight: number, reps: number) => void
     onDeleteSet: (setIndex: number, setId: number | null) => void
+    onDeleteExercise: () => void
     onNotesChange: (note: string) => void
     onNotesBlur: (note: string) => void
 }) {
@@ -25,6 +27,8 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
     const [editingSetId, setEditingId] = useState<number | null>(null)
     const [editDraftWeight, setEditDraftWeight] = useState(0);
     const [editDraftReps, setEditDraftReps] = useState(0);
+
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     function openAddSet() {
         setEditingIndex(null);
@@ -71,7 +75,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                         </span>
                     )}
                 </div>
-                <span className={`text-[11.5px] font-bold flex items-center gap-1 'text-text-muted'`}>
+                <span className="text-[11.5px] font-bold flex items-center gap-1 text-text-muted">
                     {formatSeries(exercise.workoutSets.length)}
                     <span className={`inline-block transition-transform duration-200 ${exercise.expanded ? 'rotate-90' : ''}`}>
                         ›
@@ -188,9 +192,31 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                             rows={2}
                             className="w-full mt-2.5 bg-btn border border-white/[0.07] rounded-lg px-3 py-2 text-[12.5px] text-text-primary placeholder:text-text-faint outline-none resize-none"
                         />
+
+                        <button
+                            onClick={() => setConfirmingDelete(true)}
+                            className="w-full mt-2.5 py-2 rounded-lg text-red-500/80 hover:text-red-500 transition-colors duration-150 text-[12px] font-bold cursor-pointer flex items-center justify-center gap-1.5"
+                        >
+                            <TrashIcon size={12} />
+                            Vymazať cvik
+                        </button>
                     </div>
                 </div>
             </div>
+
+            {confirmingDelete && <ConfirmDialog
+                title={"Vymazať cvik?"}
+                description={`${exercise.exerciseName} aj so všetkými sériami sa natrvalo vymaže.`}
+                onConfirm={() => {
+                    setConfirmingDelete(false)
+                    onDeleteExercise()
+                }}
+                onCancel={() => setConfirmingDelete(false)}
+                confirmLabel={"Vymazať"}
+                cancelLabel={"Zavrieť"}
+                confirmColor="red"
+                />
+            }
         </div>
     )
 }
