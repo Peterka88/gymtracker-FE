@@ -8,6 +8,7 @@ import BarbellIcon from "../components/icons/BarbellIcon.tsx";
 import {workoutApi} from "../api/workoutApi.ts";
 import TrashIcon from "../components/icons/TrashIcon.tsx";
 import ConfirmDialog from "../components/ConfirmDialog.tsx";
+import {useToast} from "../context/ToastContext.tsx";
 
 function PauseIcon() {
     return (
@@ -68,6 +69,7 @@ type UiWorkoutSession = Omit<WorkoutSessionDetail, 'pr' | 'sessionExercises'> & 
 function ActiveWorkoutPage() {
 
     const { id } = useParams<{id: string}>()
+    const { showSuccess } = useToast()
 
     const navigate = useNavigate();
     const [session, setSession] = useState<UiWorkoutSession | null>();
@@ -503,7 +505,10 @@ function ActiveWorkoutPage() {
                 title={"Vymazať tréning"}
                 description={"Naozaj chcete vymazať aktívny tréning?"}
                 onConfirm={() => workoutApi.deleteWorkout(Number(id))
-                    .then(() => navigate("/workouts"))}
+                    .then(() => {
+                        navigate("/workouts")
+                        showSuccess("Tréning bol vymazaný")
+                    })}
                 onCancel={() => setDeleteSessionDialog(false)}
                 confirmLabel={"Vymazať"}
                 cancelLabel={"Zavrieť"}
@@ -517,6 +522,7 @@ function ActiveWorkoutPage() {
                     workoutApi.finishWorkout(Number(id))
                     navigate('/workouts')
                     localStorage.removeItem(timerStorageKey(id))
+                    showSuccess("Tréning bol uložený")
                 }}
                 onCancel={() => setEndSessionDialog(false)}
                 confirmLabel={"Ukončiť"}

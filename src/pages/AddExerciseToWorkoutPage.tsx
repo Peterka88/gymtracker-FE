@@ -11,6 +11,7 @@ import {fetchExercises} from "../api/exercisesApi.ts";
 import SearchIcon from "../components/icons/SearchIcon.tsx";
 import {workoutApi} from "../api/workoutApi.ts";
 import type {PageResponse} from "../types/PageResponse.ts";
+import { useToast } from "../context/ToastContext.tsx"
 
 function ChevronDownIcon() {
     return (
@@ -26,6 +27,7 @@ const categoryFilters: (MuscleGroupCategory | 'Všetko')[] = ['Všetko', ...Obje
 function AddExerciseToWorkoutPage() {
 
     const { id } = useParams<{id: string}>()
+    const { showSuccess } = useToast()
 
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
@@ -251,7 +253,10 @@ function AddExerciseToWorkoutPage() {
                 <button
                     disabled={selectedExercises.length === 0}
                     onClick={() => workoutApi.addExercise(Number(id), selectedIds).then(
-                            () => navigate(`/workouts/${id}/active`))}
+                            () => {
+                                navigate(`/workouts/${id}/active`)
+                                showSuccess(`Pridané cviky - ${selectedExercises.length}`)
+                            })}
 
                     className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer
                                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
