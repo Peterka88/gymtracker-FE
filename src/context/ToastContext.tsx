@@ -9,7 +9,10 @@ interface Toast {
     id: number
     message: string
     type: ToastType
+    leaving: boolean
 }
+
+const TOAST_EXIT_DURATION = 250
 
 const toastStyles: Record<ToastType, string> = {
     error: 'border-red-500/30 text-red-400',
@@ -42,9 +45,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
     const showToast = useCallback((message: string, type: ToastType) => {
         const id = Date.now()
-        setToasts((prev) => [...prev, { id, message, type }])
+        setToasts((prev) => [...prev, { id, message, type, leaving: false }])
         setTimeout(() => {
-            setToasts((prev) => prev.filter((toast) => toast.id !== id))
+            setToasts((prev) => prev.map((toast) => (toast.id === id ? { ...toast, leaving: true } : toast)))
+            setTimeout(() => {
+                setToasts((prev) => prev.filter((toast) => toast.id !== id))
+            }, TOAST_EXIT_DURATION)
         }, 4000)
     }, [])
 
@@ -66,7 +72,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 {toasts.map((toast) => (
                     <div
                         key={toast.id}
-                        className={`pointer-events-auto max-w-sm w-full bg-card border ${toastStyles[toast.type]} rounded-2xl px-4 py-3 text-[13px] font-semibold shadow-lg flex items-center gap-2`}
+                        className={`pointer-events-auto max-w-sm w-full bg-card border ${toastStyles[toast.type]} rounded-2xl px-4 py-3 text-[13px] font-semibold shadow-lg flex items-center gap-2 ${toast.leaving ? 'animate-toast-out' : 'animate-toast-in'}`}
                     >
                         <span className="shrink-0">{toastIcons[toast.type]}</span>
                         {toast.message}
