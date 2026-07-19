@@ -9,3 +9,13 @@ export function decodeJwtPayload<T = unknown>(token: string): T {
     )
     return JSON.parse(json)
 }
+
+export function isTokenExpired(token: string): boolean {
+    try {
+        const { exp } = decodeJwtPayload<{ exp?: number }>(token)
+        if (!exp) return false
+        return Date.now() >= exp * 1000
+    } catch {
+        return true
+    }
+}
