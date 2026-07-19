@@ -110,7 +110,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                             ✕
                                         </button>
                                     </div>
-                                    <div className="flex gap-4">
+                                    <div className="flex gap-2">
                                         <Stepper label="Váha (kg)" value={editDraftWeight} onChange={setEditDraftWeight} color="text-protein" />
                                         <Stepper label="Opakovania" value={editDraftReps} onChange={setEditDraftReps} color="text-fat" allowDecimals={false} />
                                     </div>
@@ -164,7 +164,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                         ✕
                                     </button>
                                 </div>
-                                <div className="flex gap-4">
+                                <div className="flex gap-2">
                                     <Stepper label="Váha (kg)" value={draftWeight} onChange={setDraftWeight} color="text-protein" />
                                     <Stepper label="Opakovania" value={draftReps} onChange={setDraftReps} color="text-fat" allowDecimals={false} />
                                 </div>

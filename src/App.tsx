@@ -11,6 +11,7 @@ import AddExerciseToWorkoutPage from "./pages/AddExerciseToWorkoutPage.tsx"
 import WorkoutDetailPage from "./pages/WorkoutDetailPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import { ToastProvider } from "./context/ToastContext.tsx";
+import { Analytics } from "@vercel/analytics/react";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
                 </Routes>
             </Router>
         </ToastProvider>
+        <Analytics />
     </AppShell>
   )
 }

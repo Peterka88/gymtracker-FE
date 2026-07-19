@@ -28,12 +28,12 @@ function Stepper({label, value, onChange, color, allowDecimals = true}: {
     }
 
     return (
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
             <div className={`text-[11px] font-bold text-center mb-2 ${color}`}>{label}</div>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-2">
                 <button
                     onClick={() => commit(Math.max(0, value - 1))}
-                    className="w-8 h-8 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg cursor-pointer"
+                    className="shrink-0 w-7 h-7 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg cursor-pointer"
                 >
                     −
                 </button>
@@ -43,11 +43,11 @@ function Stepper({label, value, onChange, color, allowDecimals = true}: {
                     value={text}
                     onChange={(event) => handleTextChange(event.target.value)}
                     onBlur={() => setText(String(value))}
-                    className="text-[20px] font-extrabold w-16 text-center bg-transparent outline-none"
+                    className="text-[20px] font-extrabold w-12 min-w-0 text-center bg-transparent outline-none"
                 />
                 <button
                     onClick={() => commit(value + 1)}
-                    className="w-8 h-8 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg cursor-pointer"
+                    className="shrink-0 w-7 h-7 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg cursor-pointer"
                 >
                     +
                 </button>
