@@ -7,13 +7,17 @@ import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
 import {workoutApi} from "../api/workoutApi.ts";
 import {useNavigate} from "react-router-dom";
 import {formatDayTime, formatTodayDate} from "../utils/formatDateTime.ts";
+import LogoutIcon from "../components/icons/LogoutIcon.tsx";
+import ConfirmDialog from "../components/ConfirmDialog.tsx";
+import {authApi} from "../api/authApi.ts";
 
 function Dashboard() {
     const navigate = useNavigate();
 
-
     const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSummary[]>([]);
     const [workoutsLoading, setWorkoutsLoading] = useState(true);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [confirmLogout, setConfirmLogout] = useState(false);
 
     const kcalRemaining = 1358
     const kcalGoal = 2000
@@ -44,7 +48,24 @@ function Dashboard() {
                     <div className="text-text-muted text-[13px]">{formatTodayDate()}</div>
                     <div className="text-[23px] font-extrabold mt-0.5">{formatDayTime()}, {localStorage.getItem('name')}</div>
                 </div>
-                <div className="w-[42px] h-[42px] rounded-full bg-card border border-white/10" />
+                <div className={"relative"}>
+                    <button onClick={() => setMenuOpen((open) => !open)}
+                            className="w-[42px] h-[42px] rounded-full bg-card border border-white/10 cursor-pointer" />
+
+                    {menuOpen && (
+                        <div className="absolute right-0 top-[46px] w-42 bg-card bordeer border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
+                            <button
+                                onClick={() => {
+                                    setMenuOpen(false)
+                                    setConfirmLogout(true)
+                                }}
+                                className="w-full flex items-center gap-2 text-left px-8 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-btn cursor-pointer">
+                                <LogoutIcon size={14} />
+                                Odhlásiť sa
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <DashboardDiagram kcalGoal={kcalGoal} kcalRemaining={kcalRemaining} macros={macros}/>
@@ -82,6 +103,18 @@ function Dashboard() {
                     ))}
                 </div>
             )}
+
+            {confirmLogout && <ConfirmDialog
+                    title={"Odhlásiť sa?"}
+                    description={"Naozaj sa chcete odhlásiť?"}
+                    onConfirm={() => {
+                        authApi.logout()
+                        navigate("/")
+                    }}
+                    onCancel={() => setConfirmLogout(false)}
+                    confirmLabel={"Odhlásiť"}
+                    cancelLabel={"Zavrieť"}
+                    confirmColor={"red"} />}
 
             <BottomNav />
         </div>
