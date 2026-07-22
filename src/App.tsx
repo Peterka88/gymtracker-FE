@@ -3,12 +3,12 @@ import AppShell from "./components/AppShell.tsx";
 import Login from "./pages/Login.tsx";
 import {Route, BrowserRouter as Router, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard.tsx";
-import WorkoutsListPage from "./pages/WorkoutsListPage.tsx";
-import AddExercisePage from "./pages/AddExercisePage.tsx"
-import ExercisesListPage from "./pages/ExercisesListPage.tsx"
-import ActiveWorkoutPage from "./pages/ActiveWorkoutPage.tsx"
-import AddExerciseToWorkoutPage from "./pages/AddExerciseToWorkoutPage.tsx"
-import WorkoutDetailPage from "./pages/WorkoutDetailPage.tsx";
+import WorkoutsListPage from "./pages/workouts/WorkoutsListPage.tsx";
+import AddExercisePage from "./pages/exercises/AddExercisePage.tsx"
+import ExercisesListPage from "./pages/exercises/ExercisesListPage.tsx"
+import ActiveWorkoutPage from "./pages/workouts/ActiveWorkoutPage.tsx"
+import AddExerciseToWorkoutPage from "./pages/workouts/AddExerciseToWorkoutPage.tsx"
+import WorkoutDetailPage from "./pages/workouts/WorkoutDetailPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import { ToastProvider } from "./context/ToastContext.tsx";
 import { Analytics } from "@vercel/analytics/react";

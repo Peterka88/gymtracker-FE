@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import BarbellIcon from "../components/icons/BarbellIcon.tsx";
-import DumbbellIcon from "../components/icons/DumbbellIcon.tsx";
+import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
+import DumbbellIcon from "../../components/icons/DumbbellIcon.tsx";
 
 function MachineIcon() {
     return (

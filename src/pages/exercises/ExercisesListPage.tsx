@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Line, LineChart } from "recharts";
-import BottomNav from "../components/BottomNav";
-import BarbellIcon from "../components/icons/BarbellIcon.tsx";
-import SearchIcon from "../components/icons/SearchIcon.tsx";
+import BottomNav from "../../components/BottomNav.tsx";
+import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
+import SearchIcon from "../../components/icons/SearchIcon.tsx";
 
 function Sparkline({ data, accent }: { data: number[]; accent: boolean }) {
     const points = data.map((value, index) => ({ index, value }))

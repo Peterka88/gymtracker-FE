@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import WorkoutRow from "../components/WorkoutRow.tsx";
-import BottomNav from "../components/BottomNav";
+import WorkoutRow from "../../components/WorkoutRow.tsx";
+import BottomNav from "../../components/BottomNav.tsx";
 import {useEffect, useState} from "react";
-import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
-import {workoutApi} from "../api/workoutApi.ts";
-import BarbellIcon from "../components/icons/BarbellIcon.tsx";
+import type {WorkoutSummary} from "../../types/WorkoutSummary.ts";
+import {workoutApi} from "../../api/workoutApi.ts";
+import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
 
 function WorkoutsListPage() {
 

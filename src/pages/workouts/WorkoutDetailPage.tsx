@@ -1,14 +1,14 @@
 import {useNavigate, useParams} from "react-router-dom";
-import type { WorkoutSessionDetail } from "../types/workout.ts";
+import type { WorkoutSessionDetail } from "../../types/workout.ts";
 import {useEffect, useState} from "react";
-import {workoutApi} from "../api/workoutApi.ts";
-import {useToast} from "../context/ToastContext.tsx";
-import WorkoutSummaryCard from "../components/WorkoutSummaryCard.tsx";
-import BottomNav from "../components/BottomNav.tsx";
-import {formatWorkoutDateTime} from "../utils/formatDateTime.ts";
-import ClockIcon from "../components/icons/ClockIcon.tsx";
-import TrashIcon from "../components/icons/TrashIcon.tsx";
-import ConfirmDialog from "../components/ConfirmDialog.tsx";
+import {workoutApi} from "../../api/workoutApi.ts";
+import {useToast} from "../../context/ToastContext.tsx";
+import WorkoutSummaryCard from "../../components/WorkoutSummaryCard.tsx";
+import BottomNav from "../../components/BottomNav.tsx";
+import {formatWorkoutDateTime} from "../../utils/formatDateTime.ts";
+import ClockIcon from "../../components/icons/ClockIcon.tsx";
+import TrashIcon from "../../components/icons/TrashIcon.tsx";
+import ConfirmDialog from "../../components/ConfirmDialog.tsx";
 
 function WorkoutDetailPage() {
     const { id } = useParams<{id: string}>()

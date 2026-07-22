@@ -6,12 +6,12 @@ import {
     muscleGroupsInCategory,
     type Exercise,
     type MuscleGroup,
-} from "../types/Exercises.ts";
-import {fetchExercises} from "../api/exercisesApi.ts";
-import SearchIcon from "../components/icons/SearchIcon.tsx";
-import {workoutApi} from "../api/workoutApi.ts";
-import type {PageResponse} from "../types/PageResponse.ts";
-import { useToast } from "../context/ToastContext.tsx"
+} from "../../types/Exercises.ts";
+import {fetchExercises} from "../../api/exercisesApi.ts";
+import SearchIcon from "../../components/icons/SearchIcon.tsx";
+import {workoutApi} from "../../api/workoutApi.ts";
+import type {PageResponse} from "../../types/PageResponse.ts";
+import { useToast } from "../../context/ToastContext.tsx"
 
 function ChevronDownIcon() {
     return (
