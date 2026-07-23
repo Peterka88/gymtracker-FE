@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav.tsx";
 import SearchIcon from "../../components/icons/SearchIcon.tsx";
@@ -23,17 +23,42 @@ function ExercisesListPage() {
     const [selectedFilter, setSelectedFilter] = useState<MuscleGroupFilter>(ALL_FILTER);
     const [exercises, setExercises] = useState<Exercise[]>([])
 
+    const [loading, setLoading] = useState<boolean>();
+    const [hasMore, setHasMore] = useState(true);
     const [page,setPage] = useState(0);
     const size = 10;
+    const sentinelRef = useRef<HTMLDivElement>(null)
+
+    const loadNextPage = () => {
+        if (loading || !hasMore) return
+        setLoading(true)
+        exerciseApi.getExercises(page, size)
+            .then((data) => {
+                setExercises((curr) => [...curr, ...data.content])
+                setHasMore(!data.last)
+                setPage((p) => p + 1)
+            }).finally(() => setLoading(false))
+    }
 
     const filteredExercises = exercises
         .filter((exercise) => selectedFilter === ALL_FILTER || exercise.muscleGroup === selectedFilter)
         .filter((exercise) => exercise.name.toLowerCase().includes(search.toLowerCase()))
 
+    useEffect(() => loadNextPage(),[])
+
     useEffect(() => {
-        exerciseApi.getExercises(page,size)
-            .then((data) => setExercises(data.content))
-    },[])
+        const node = sentinelRef.current
+        if (!node) return
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) loadNextPage()
+            },
+            { rootMargin: '200px' }
+        )
+        observer.observe(node)
+        return () => observer.disconnect()
+    }, [page, hasMore, loading]);
 
     return (
         <div className="flex flex-col min-h-screen pb-28">
@@ -98,7 +123,14 @@ function ExercisesListPage() {
                         lastDate={exercise.lastDate}
                         lastWeight={exercise.lastWeight} />
                 ))}
+                {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>
+
+            {loading && (
+                <div className="flex flex-1 justify-center items-center py-4">
+                    <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
+                </div>
+            )}
 
             <BottomNav />
         </div>
