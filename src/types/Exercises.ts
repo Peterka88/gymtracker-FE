@@ -13,10 +13,17 @@ export type MuscleGroup =
     | "CALVES"
     | "FULL_BODY";
 
+
+export type Equipment =
+    "BARBELL" | "DUMBBELL" | "MACHINE" | "BODYWEIGHT" | "CABLE"
+
 export interface Exercise {
-    id: number;
-    name: string;
-    muscleGroup: MuscleGroup;
+    id: number
+    name: string
+    muscleGroup: MuscleGroup
+    equipment: Equipment
+    lastDate: string | null
+    lastWeight: number | null
 }
 
 export const MuscleGroupCategory = {

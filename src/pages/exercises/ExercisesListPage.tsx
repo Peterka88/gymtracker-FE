@@ -1,9 +1,10 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav.tsx";
 import SearchIcon from "../../components/icons/SearchIcon.tsx";
 import ExerciseRow from "./ExerciseRow.tsx";
-import { type MuscleGroup, muscleGroupLabel } from "../../types/Exercises.ts";
+import {type Exercise, type MuscleGroup, muscleGroupLabel} from "../../types/Exercises.ts";
+import {exerciseApi} from "../../api/exercisesApi.ts";
 
 const ALL_FILTER = 'ALL' as const;
 type MuscleGroupFilter = typeof ALL_FILTER | MuscleGroup;
@@ -15,25 +16,24 @@ const muscleGroupFilterLabel: Record<MuscleGroupFilter, string> = {
     ...muscleGroupLabel,
 }
 
-const exercises: { name: string; muscleGroup: MuscleGroup; pr: boolean; lastDate: string; lastWeight: number; trend: number[]; accent: boolean }[] = [
-    { name: 'Bench press', muscleGroup: 'CHEST', pr: true, lastDate: '27. jún', lastWeight: 80, trend: [60, 64, 68, 72, 76, 80], accent: true },
-    { name: 'Sklon. tlaky s činkami', muscleGroup: 'CHEST', pr: false, lastDate: '11. jún', lastWeight: 28, trend: [26, 27, 26, 28, 27, 28], accent: false },
-    { name: 'Drepy', muscleGroup: 'QUADRICEPS', pr: true, lastDate: '23. jún', lastWeight: 120, trend: [90, 95, 100, 110, 115, 120], accent: true },
-    { name: 'Mŕtvy ťah', muscleGroup: 'BACK', pr: false, lastDate: '19. jún', lastWeight: 150, trend: [148, 150, 149, 150, 150, 150], accent: false },
-    { name: 'Tlaky nad hlavu', muscleGroup: 'SHOULDERS', pr: false, lastDate: '14. jún', lastWeight: 45, trend: [35, 38, 40, 42, 44, 45], accent: true },
-    { name: 'Bicepsový zdvih', muscleGroup: 'BICEPS', pr: false, lastDate: '9. jún', lastWeight: 20, trend: [16, 17, 18, 19, 19, 20], accent: true },
-    { name: 'Priťahovanie v predklone', muscleGroup: 'BACK', pr: false, lastDate: '25. jún', lastWeight: 62, trend: [55, 57, 58, 60, 61, 62], accent: true },
-]
-
 function ExercisesListPage() {
 
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [selectedFilter, setSelectedFilter] = useState<MuscleGroupFilter>(ALL_FILTER);
+    const [exercises, setExercises] = useState<Exercise[]>([])
+
+    const [page,setPage] = useState(0);
+    const size = 10;
 
     const filteredExercises = exercises
         .filter((exercise) => selectedFilter === ALL_FILTER || exercise.muscleGroup === selectedFilter)
         .filter((exercise) => exercise.name.toLowerCase().includes(search.toLowerCase()))
+
+    useEffect(() => {
+        exerciseApi.getExercises(page,size)
+            .then((data) => setExercises(data.content))
+    },[])
 
     return (
         <div className="flex flex-col min-h-screen pb-28">
@@ -50,9 +50,12 @@ function ExercisesListPage() {
                 </div>
                 <button
                     onClick={() => navigate('/exercises/create')}
-                    className="p-2 text-[13px] rounded-xl bg-accent text-on-accent flex items-center justify-center font-bold cursor-pointer transition-all duration-150 hover:brightness-110 active:scale-[0.95]"
+                    className="group w-10 h-10 hover:w-33 rounded-xl bg-accent text-on-accent flex items-center justify-center text-[15px] font-bold cursor-pointer transition-all duration-300 hover:brightness-110 active:scale-[0.95] overflow-hidden"
                 >
-                    Nový cvik +
+                    <span className="max-w-0 opacity-0 whitespace-nowrap overflow-hidden transition-all duration-300 group-hover:max-w-30 group-hover:opacity-100">
+                        Pridať cvik
+                    </span>
+                    <span className="m-1">+</span>
                 </button>
             </div>
 

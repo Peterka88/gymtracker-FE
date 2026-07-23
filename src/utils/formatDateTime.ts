@@ -22,6 +22,16 @@ export function formatWorkoutDateTime(startedAt: string, durationMin: number): s
     return `${dayName} ${day}. ${month} ${year} · ${formatTime(start)} – ${formatTime(end)}`
 }
 
+export function formatLastPerformedExerciseDate(date: string | null): string {
+    if (!date) return 'zatiaľ nezaznamenané'
+
+    const separatedDate = date.split('-')
+    const day = Number(separatedDate[2])
+    const month = MONTHS[Number(separatedDate[1]) - 1]
+
+    return `${day}. ${month}`
+}
+
 export function formatTodayDate(): string {
     const today = new Date()
     return `${DAYS[today.getDay()]}, ${today.getDate()}. ${MONTHS_GENITIVE[today.getMonth()]}`

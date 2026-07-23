@@ -1,6 +1,7 @@
 import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
 import {Line, LineChart} from "recharts";
 import { type MuscleGroup, muscleGroupLabel } from "../../types/Exercises.ts";
+import { formatLastPerformedExerciseDate } from "../../utils/formatDateTime.ts";
 
 function Sparkline({ data }:{ data:number[] }) {
     const points = data.map((value, index) => ({ index, value }))
@@ -21,8 +22,8 @@ function Sparkline({ data }:{ data:number[] }) {
 function ExerciseRow({name, muscleGroup, lastDate, lastWeight}: {
     name: string
     muscleGroup: MuscleGroup
-    lastDate: string
-    lastWeight: number
+    lastDate: string | null
+    lastWeight: number | null
 }) {
 
     return (
@@ -35,7 +36,8 @@ function ExerciseRow({name, muscleGroup, lastDate, lastWeight}: {
                     {name}
                 </div>
                 <div className="text-text-muted text-xs mt-0.5">
-                    {muscleGroupLabel[muscleGroup]} · naposledy {lastDate} · {lastWeight} kg
+                    {muscleGroupLabel[muscleGroup]} · {formatLastPerformedExerciseDate(lastDate)}
+                    {lastWeight !== null && ` · ${lastWeight} kg`}
                 </div>
             </div>
             <Sparkline data={[10, 50, 80, 100, 120, 150]} />
