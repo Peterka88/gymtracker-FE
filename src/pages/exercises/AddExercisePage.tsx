@@ -2,48 +2,17 @@ import { useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
 import DumbbellIcon from "../../components/icons/DumbbellIcon.tsx";
-
-function MachineIcon() {
-    return (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="3.3" r="1.6" />
-            <path d="M12 5v3" />
-            <rect x="7" y="8" width="10" height="12.5" rx="1.8" />
-            <line x1="7" y1="12.5" x2="17" y2="12.5" />
-            <line x1="7" y1="16.7" x2="17" y2="16.7" />
-        </svg>
-    )
-}
-
-function BodyweightIcon() {
-    return (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="4" r="2" />
-            <path d="M12 6v7" />
-            <path d="M12 8.5l-5.5 -3" />
-            <path d="M12 8.5l5.5 -3" />
-            <path d="M12 13l-4.5 7" />
-            <path d="M12 13l4.5 7" />
-        </svg>
-    )
-}
-
-function CableIcon() {
-    return (
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="4.5" r="2.5" />
-            <path d="M12 7v9" strokeDasharray="1.5 2.2" />
-            <path d="M8.5 20a3.5 3.5 0 0 0 7 0" />
-        </svg>
-    )
-}
+import MachineIcon from "../../components/icons/MachineIcon.tsx";
+import BodyweightIcon from "../../components/icons/BodyweightIcon.tsx";
+import CableIcon from "../../components/icons/CableIcon.tsx";
+import { type MuscleGroup, muscleGroupLabel } from "../../types/Exercises.ts";
 
 const equipmentIcons: Record<string, () => ReactNode> = {
     'Činka': () => <BarbellIcon size={30} />,
     'Jednoručky': () => <DumbbellIcon size={32} />,
-    'Stroj': MachineIcon,
-    'Vlastná váha': BodyweightIcon,
-    'Kladka': CableIcon,
+    'Stroj': () => <MachineIcon />,
+    'Vlastná váha': () => <BodyweightIcon />,
+    'Kladka': () => <CableIcon />,
 }
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
@@ -60,18 +29,18 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
     )
 }
 
-const muscleGroups = ['Hrudník', 'Chrbát', 'Nohy', 'Ramená', 'Ruky', 'Brucho']
+const muscleGroups = Object.keys(muscleGroupLabel) as MuscleGroup[]
 const equipmentOptions = ['Činka', 'Jednoručky', 'Stroj', 'Vlastná váha', 'Kladka']
 
 function AddExercisePage() {
 
     const navigate = useNavigate();
     const [exerciseName, setExerciseName] = useState('');
-    const [selectedMuscleGroup, setSelectedMuscleGroup] = useState('Hrudník');
+    const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<MuscleGroup>('CHEST');
     const [selectedEquipment, setSelectedEquipment] = useState('Činka');
-    const [trackWeight, setTrackWeight] = useState(true);
-    const [trackReps, setTrackReps] = useState(true);
-    const [trackPr, setTrackPr] = useState(true);
+    // const [trackWeight, setTrackWeight] = useState(true);
+    // const [trackReps, setTrackReps] = useState(true);
+    // const [trackPr, setTrackPr] = useState(true);
 
     return (
         <div className="flex flex-col min-h-screen pb-8">
@@ -111,7 +80,7 @@ function AddExercisePage() {
                                     : 'bg-chip border border-white/10 text-text-secondary'
                             }`}
                         >
-                            {group}
+                            {muscleGroupLabel[group]}
                         </button>
                     ))}
                 </div>
@@ -137,23 +106,23 @@ function AddExercisePage() {
                 </div>
             </div>
 
-            <div className="mt-6 px-5">
-                <div className="text-text-muted text-[11px] font-bold tracking-[0.08em] uppercase mb-2">Sledovať</div>
-                <div className="bg-card border border-white/[0.07] rounded-2xl overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/5">
-                        <span className="text-[14px] font-semibold">Váha</span>
-                        <Toggle checked={trackWeight} onChange={() => setTrackWeight((v) => !v)} />
-                    </div>
-                    <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/5">
-                        <span className="text-[14px] font-semibold">Opakovania</span>
-                        <Toggle checked={trackReps} onChange={() => setTrackReps((v) => !v)} />
-                    </div>
-                    <div className="flex items-center justify-between px-4 py-3.5">
-                        <span className="text-[14px] font-semibold">Sledovať osobný rekord (PR)</span>
-                        <Toggle checked={trackPr} onChange={() => setTrackPr((v) => !v)} />
-                    </div>
-                </div>
-            </div>
+            {/*<div className="mt-6 px-5">*/}
+            {/*    <div className="text-text-muted text-[11px] font-bold tracking-[0.08em] uppercase mb-2">Sledovať</div>*/}
+            {/*    <div className="bg-card border border-white/[0.07] rounded-2xl overflow-hidden">*/}
+            {/*        <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/5">*/}
+            {/*            <span className="text-[14px] font-semibold">Váha</span>*/}
+            {/*            <Toggle checked={trackWeight} onChange={() => setTrackWeight((v) => !v)} />*/}
+            {/*        </div>*/}
+            {/*        <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/5">*/}
+            {/*            <span className="text-[14px] font-semibold">Opakovania</span>*/}
+            {/*            <Toggle checked={trackReps} onChange={() => setTrackReps((v) => !v)} />*/}
+            {/*        </div>*/}
+            {/*        <div className="flex items-center justify-between px-4 py-3.5">*/}
+            {/*            <span className="text-[14px] font-semibold">Sledovať osobný rekord (PR)</span>*/}
+            {/*            <Toggle checked={trackPr} onChange={() => setTrackPr((v) => !v)} />*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
             <div className="px-5 mt-8">
                 <button className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer">
