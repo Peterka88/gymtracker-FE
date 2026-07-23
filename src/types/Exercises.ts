@@ -53,6 +53,14 @@ export const muscleGroupLabel: Record<MuscleGroup, string> = {
     FULL_BODY: 'Celé telo',
 };
 
+export const equipmentLabel: Record<Equipment, string> = {
+    BARBELL: "Činka",
+    DUMBBELL: "Jednoručky",
+    MACHINE: "Stroj",
+    BODYWEIGHT: "Vlastná váha",
+    CABLE: "Kladka"
+}
+
 export const muscleGroupCategory: Record<MuscleGroup, MuscleGroupCategory> = {
     CHEST: MuscleGroupCategory.Hrudnik,
     BACK: MuscleGroupCategory.Chrbat,
