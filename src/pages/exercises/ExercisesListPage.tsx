@@ -23,21 +23,21 @@ function ExercisesListPage() {
     const [selectedFilter, setSelectedFilter] = useState<MuscleGroupFilter>(ALL_FILTER);
     const [exercises, setExercises] = useState<Exercise[]>([])
 
-    const [loading, setLoading] = useState<boolean>();
+    const loadingRef = useRef(false);
     const [hasMore, setHasMore] = useState(true);
     const [page,setPage] = useState(0);
     const size = 10;
     const sentinelRef = useRef<HTMLDivElement>(null)
 
     const loadNextPage = () => {
-        if (loading || !hasMore) return
-        setLoading(true)
+        if (loadingRef.current || !hasMore) return
+        loadingRef.current = true
         exerciseApi.getExercises(page, size)
             .then((data) => {
                 setExercises((curr) => [...curr, ...data.content])
                 setHasMore(!data.last)
                 setPage((p) => p + 1)
-            }).finally(() => setLoading(false))
+            }).finally(() => loadingRef.current = false)
     }
 
     const filteredExercises = exercises
@@ -58,7 +58,7 @@ function ExercisesListPage() {
         )
         observer.observe(node)
         return () => observer.disconnect()
-    }, [page, hasMore, loading]);
+    }, [page, hasMore, loadingRef]);
 
     return (
         <div className="flex flex-col min-h-screen pb-28">
@@ -120,13 +120,14 @@ function ExercisesListPage() {
                     <ExerciseRow
                         name={exercise.name}
                         muscleGroup={exercise.muscleGroup}
+                        equipment={exercise.equipment}
                         lastDate={exercise.lastDate}
                         lastWeight={exercise.lastWeight} />
                 ))}
                 {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>
 
-            {loading && (
+            {loadingRef && hasMore && (
                 <div className="flex flex-1 justify-center items-center py-4">
                     <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
                 </div>
