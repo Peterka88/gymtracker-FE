@@ -12,6 +12,7 @@ import WorkoutDetailPage from "./pages/workouts/WorkoutDetailPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import { ToastProvider } from "./context/ToastContext.tsx";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             </Router>
         </ToastProvider>
         <Analytics />
+        <SpeedInsights />
     </AppShell>
   )
 }
