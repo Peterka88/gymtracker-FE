@@ -3,13 +3,26 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav.tsx";
 import SearchIcon from "../../components/icons/SearchIcon.tsx";
 import ExerciseRow from "./ExerciseRow.tsx";
-import {type Exercise, type MuscleGroup, muscleGroupLabel} from "../../types/Exercises.ts";
+import {
+    type Exercise,
+    type MuscleGroup, muscleGroupCategory,
+    MuscleGroupCategory,
+    muscleGroupLabel,
+    muscleGroupsInCategory
+} from "../../types/Exercises.ts";
 import {exerciseApi} from "../../api/exercisesApi.ts";
 
-const ALL_FILTER = 'ALL' as const;
-type MuscleGroupFilter = typeof ALL_FILTER | MuscleGroup;
 
-const muscleGroupFilters: MuscleGroupFilter[] = [ALL_FILTER, ...Object.keys(muscleGroupLabel) as MuscleGroup[]]
+const CATEGORY_ALL = 'ALL' as const;
+const ALL_FILTER = 'ALL' as const;
+
+type CategoryFilter = typeof CATEGORY_ALL | MuscleGroupCategory
+type MuscleGroupFilter = typeof ALL_FILTER | MuscleGroup;
+for (let _ of Object.keys(muscleGroupLabel) as MuscleGroup[]) {
+}
+
+const categoryFilters: CategoryFilter[] = [CATEGORY_ALL, ...Object.values(MuscleGroupCategory)]
+
 
 const muscleGroupFilterLabel: Record<MuscleGroupFilter, string> = {
     [ALL_FILTER]: 'Všetko',
@@ -20,7 +33,10 @@ function ExercisesListPage() {
 
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
-    const [selectedFilter, setSelectedFilter] = useState<MuscleGroupFilter>(ALL_FILTER);
+
+    const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>(CATEGORY_ALL)
+    const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<MuscleGroupFilter>(ALL_FILTER);
+
     const [exercises, setExercises] = useState<Exercise[]>([])
 
     const loadingRef = useRef(false);
@@ -40,8 +56,14 @@ function ExercisesListPage() {
             }).finally(() => loadingRef.current = false)
     }
 
+    const muscleGroupFilterOptions: MuscleGroupFilter[] = selectedCategory === CATEGORY_ALL ? [] : [ALL_FILTER, ...muscleGroupsInCategory(selectedCategory as MuscleGroupCategory)]
+
     const filteredExercises = exercises
-        .filter((exercise) => selectedFilter === ALL_FILTER || exercise.muscleGroup === selectedFilter)
+        .filter((exercise) => {
+            if (selectedMuscleGroup !== ALL_FILTER) return exercise.muscleGroup === selectedMuscleGroup
+            if (selectedCategory !== CATEGORY_ALL) return muscleGroupCategory[exercise.muscleGroup] === selectedCategory
+            return true
+        })
         .filter((exercise) => exercise.name.toLowerCase().includes(search.toLowerCase()))
 
     useEffect(() => loadNextPage(),[])
@@ -99,21 +121,43 @@ function ExercisesListPage() {
             </div>
 
             <div className="flex gap-2 px-5 mt-3 pb-1 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden">
-                {muscleGroupFilters.map((filter) => (
+                {categoryFilters.map((filter) => (
                     <button
                         key={filter}
                         type="button"
-                        onClick={() => setSelectedFilter(filter)}
+                        onClick={() => {
+                            setSelectedCategory(filter)
+                            setSelectedMuscleGroup(ALL_FILTER)
+                        }}
                         className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold cursor-pointer transition-colors duration-150 ${
-                            selectedFilter === filter
+                            selectedCategory === filter
                                 ? 'bg-chip border-2 border-accent text-accent'
                                 : 'bg-chip border border-white/10 text-text-secondary'
                         }`}
                     >
-                        {muscleGroupFilterLabel[filter]}
+                        {filter === CATEGORY_ALL ? 'Všetko' : filter}
                     </button>
                 ))}
             </div>
+
+            {selectedCategory !== CATEGORY_ALL && muscleGroupFilterOptions.length > 2 && (
+                <div className="flex gap-2 px-5 mt-3 pb-1 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden">
+                    {muscleGroupFilterOptions.map((filter) => (
+                        <button
+                            key={filter}
+                            type="button"
+                            onClick={() => setSelectedMuscleGroup(filter)}
+                            className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold cursor-pointer transition-colors duration-150 ${
+                                selectedMuscleGroup === filter
+                                    ? 'bg-chip border-2 border-accent text-accent'
+                                    : 'bg-chip border border-white/10 text-text-secondary'
+                            }`}
+                        >
+                            {muscleGroupFilterLabel[filter]}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             <div className="px-5 mt-2">
                 {filteredExercises.map((exercise) => (

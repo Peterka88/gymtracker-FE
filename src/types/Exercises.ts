@@ -3,6 +3,7 @@ export type MuscleGroup =
     | "CHEST"
     | "BACK"
     | "SHOULDERS"
+    | "TRAPS"
     | "BICEPS"
     | "TRICEPS"
     | "FOREARMS"
@@ -42,6 +43,7 @@ export const muscleGroupLabel: Record<MuscleGroup, string> = {
     CHEST: 'Hrudník',
     BACK: 'Chrbát',
     SHOULDERS: 'Ramená',
+    TRAPS: 'Trapézy',
     BICEPS: 'Biceps',
     TRICEPS: 'Triceps',
     FOREARMS: 'Predlaktia',
@@ -65,6 +67,7 @@ export const muscleGroupCategory: Record<MuscleGroup, MuscleGroupCategory> = {
     CHEST: MuscleGroupCategory.Hrudnik,
     BACK: MuscleGroupCategory.Chrbat,
     SHOULDERS: MuscleGroupCategory.Ramena,
+    TRAPS: MuscleGroupCategory.Chrbat,
     BICEPS: MuscleGroupCategory.Ruky,
     TRICEPS: MuscleGroupCategory.Ruky,
     FOREARMS: MuscleGroupCategory.Ruky,
