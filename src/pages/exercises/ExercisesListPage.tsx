@@ -5,7 +5,7 @@ import SearchIcon from "../../components/icons/SearchIcon.tsx";
 import ExerciseRow from "./ExerciseRow.tsx";
 import {
     type Exercise,
-    type MuscleGroup, muscleGroupCategory,
+    type MuscleGroup,
     MuscleGroupCategory,
     muscleGroupLabel,
     muscleGroupsInCategory
@@ -18,8 +18,7 @@ const ALL_FILTER = 'ALL' as const;
 
 type CategoryFilter = typeof CATEGORY_ALL | MuscleGroupCategory
 type MuscleGroupFilter = typeof ALL_FILTER | MuscleGroup;
-for (let _ of Object.keys(muscleGroupLabel) as MuscleGroup[]) {
-}
+
 
 const categoryFilters: CategoryFilter[] = [CATEGORY_ALL, ...Object.values(MuscleGroupCategory)]
 
@@ -40,33 +39,58 @@ function ExercisesListPage() {
     const [exercises, setExercises] = useState<Exercise[]>([])
 
     const loadingRef = useRef(false);
+    const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [page,setPage] = useState(0);
+    const pageRef = useRef(0);
+    const requestIdRef = useRef(0);
     const size = 10;
     const sentinelRef = useRef<HTMLDivElement>(null)
 
-    const loadNextPage = () => {
+    const loadNextPage = (pageToLoad: number) => {
         if (loadingRef.current || !hasMore) return
         loadingRef.current = true
-        exerciseApi.getExercises(page, size)
+        setLoading(true)
+        const requestId = requestIdRef.current
+        exerciseApi.getExercises(pageToLoad, size, activeMuscleGroups, search)
             .then((data) => {
+                if (requestIdRef.current !== requestId) return
                 setExercises((curr) => [...curr, ...data.content])
                 setHasMore(!data.last)
-                setPage((p) => p + 1)
-            }).finally(() => loadingRef.current = false)
+                pageRef.current = pageToLoad + 1
+            }).finally(() => {
+                if (requestIdRef.current !== requestId) return
+                loadingRef.current = false
+                setLoading(false)
+            })
     }
+
+    const loadNextPageRef = useRef(loadNextPage)
+    useEffect(() => {
+        loadNextPageRef.current = loadNextPage
+    });
 
     const muscleGroupFilterOptions: MuscleGroupFilter[] = selectedCategory === CATEGORY_ALL ? [] : [ALL_FILTER, ...muscleGroupsInCategory(selectedCategory as MuscleGroupCategory)]
 
-    const filteredExercises = exercises
-        .filter((exercise) => {
-            if (selectedMuscleGroup !== ALL_FILTER) return exercise.muscleGroup === selectedMuscleGroup
-            if (selectedCategory !== CATEGORY_ALL) return muscleGroupCategory[exercise.muscleGroup] === selectedCategory
-            return true
-        })
-        .filter((exercise) => exercise.name.toLowerCase().includes(search.toLowerCase()))
+    const activeMuscleGroups: MuscleGroup[] | undefined =
+        selectedMuscleGroup !== ALL_FILTER ? [selectedMuscleGroup]
+            : selectedCategory !== CATEGORY_ALL
+                ? muscleGroupsInCategory(selectedCategory as MuscleGroupCategory)
+                : undefined
 
-    useEffect(() => loadNextPage(),[])
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            requestIdRef.current += 1
+            loadingRef.current = false
+            setLoading(false)
+            setExercises([])
+            setHasMore(true)
+            pageRef.current = 0
+            loadNextPage(0)
+        }, 300)
+
+        return () => clearTimeout(timeout)
+    }, [selectedMuscleGroup, selectedCategory, search]);
 
     useEffect(() => {
         const node = sentinelRef.current
@@ -74,13 +98,13 @@ function ExercisesListPage() {
 
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting) loadNextPage()
+                if (entries[0].isIntersecting) loadNextPageRef.current(pageRef.current)
             },
             { rootMargin: '200px' }
         )
         observer.observe(node)
         return () => observer.disconnect()
-    }, [page, hasMore, loadingRef]);
+    }, [hasMore, exercises.length]);
 
     return (
         <div className="flex flex-col min-h-screen pb-28">
@@ -160,8 +184,9 @@ function ExercisesListPage() {
             )}
 
             <div className="px-5 mt-2">
-                {filteredExercises.map((exercise) => (
+                {exercises.map((exercise) => (
                     <ExerciseRow
+                        key={exercise.id}
                         name={exercise.name}
                         muscleGroup={exercise.muscleGroup}
                         equipment={exercise.equipment}
@@ -171,7 +196,7 @@ function ExercisesListPage() {
                 {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>
 
-            {loadingRef && hasMore && (
+            {loading && hasMore && (
                 <div className="flex flex-1 justify-center items-center py-4">
                     <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
                 </div>

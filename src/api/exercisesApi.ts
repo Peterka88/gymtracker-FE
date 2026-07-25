@@ -4,9 +4,15 @@ import type {PageResponse} from "../types/PageResponse.ts";
 
 
 export const exerciseApi = {
-    getExercises: (page:number, size:number) => {
-      return client.get<PageResponse<Exercise>>('/exercises', {params: {page,size}})
-          .then((res) => res.data)
+    getExercises: (page: number, size: number, muscleGroups?: MuscleGroup[], search?: string) => {
+      return client.get<PageResponse<Exercise>>('/exercises', {
+          params: {
+              search: search || undefined,
+              muscleGroups: muscleGroups?.length ? muscleGroups.join(',') : undefined,
+              page,
+              size
+          }
+      }).then((res) => res.data)
     },
     addToWorkout: (page = 0, size = 10) => {
         return client.get<PageResponse<Exercise>>('/exercises/workout', {params: {page, size}})
