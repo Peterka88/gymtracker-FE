@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import BottomNav from "../components/BottomNav";
-import ExerciseCard from "../components/ExerciseCard.tsx";
-import type {SessionExercise, WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
-import ClockIcon from "../components/icons/ClockIcon.tsx";
-import BarbellIcon from "../components/icons/BarbellIcon.tsx";
-import {workoutApi} from "../api/workoutApi.ts";
-import TrashIcon from "../components/icons/TrashIcon.tsx";
-import ConfirmDialog from "../components/ConfirmDialog.tsx";
-import {useToast} from "../context/ToastContext.tsx";
+import BottomNav from "../../components/BottomNav.tsx";
+import ExerciseCard from "../../components/ExerciseCard.tsx";
+import type {SessionExercise, WorkoutSessionDetail, WorkoutSet} from "../../types/workout.ts";
+import ClockIcon from "../../components/icons/ClockIcon.tsx";
+import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
+import {workoutApi} from "../../api/workoutApi.ts";
+import TrashIcon from "../../components/icons/TrashIcon.tsx";
+import ConfirmDialog from "../../components/ConfirmDialog.tsx";
+import {useToast} from "../../context/ToastContext.tsx";
 
 function PauseIcon() {
     return (

@@ -3,6 +3,7 @@ export type MuscleGroup =
     | "CHEST"
     | "BACK"
     | "SHOULDERS"
+    | "TRAPS"
     | "BICEPS"
     | "TRICEPS"
     | "FOREARMS"
@@ -13,10 +14,17 @@ export type MuscleGroup =
     | "CALVES"
     | "FULL_BODY";
 
+
+export type Equipment =
+    "BARBELL" | "DUMBBELL" | "MACHINE" | "BODYWEIGHT" | "CABLE"
+
 export interface Exercise {
-    id: number;
-    name: string;
-    muscleGroup: MuscleGroup;
+    id: number
+    name: string
+    muscleGroup: MuscleGroup
+    equipment: Equipment
+    lastDate: string | null
+    lastWeight: number | null
 }
 
 export const MuscleGroupCategory = {
@@ -35,6 +43,7 @@ export const muscleGroupLabel: Record<MuscleGroup, string> = {
     CHEST: 'Hrudník',
     BACK: 'Chrbát',
     SHOULDERS: 'Ramená',
+    TRAPS: 'Trapézy',
     BICEPS: 'Biceps',
     TRICEPS: 'Triceps',
     FOREARMS: 'Predlaktia',
@@ -46,10 +55,19 @@ export const muscleGroupLabel: Record<MuscleGroup, string> = {
     FULL_BODY: 'Celé telo',
 };
 
+export const equipmentLabel: Record<Equipment, string> = {
+    BARBELL: "Činka",
+    DUMBBELL: "Jednoručky",
+    MACHINE: "Stroj",
+    BODYWEIGHT: "Vlastná váha",
+    CABLE: "Kladka"
+}
+
 export const muscleGroupCategory: Record<MuscleGroup, MuscleGroupCategory> = {
     CHEST: MuscleGroupCategory.Hrudnik,
     BACK: MuscleGroupCategory.Chrbat,
     SHOULDERS: MuscleGroupCategory.Ramena,
+    TRAPS: MuscleGroupCategory.Chrbat,
     BICEPS: MuscleGroupCategory.Ruky,
     TRICEPS: MuscleGroupCategory.Ruky,
     FOREARMS: MuscleGroupCategory.Ruky,

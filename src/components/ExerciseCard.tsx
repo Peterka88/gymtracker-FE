@@ -1,6 +1,6 @@
 import Stepper from "./Stepper.tsx";
 import {useState} from "react";
-import type {UiSessionExercise, UiWorkoutSet} from "../pages/ActiveWorkoutPage.tsx";
+import type {UiSessionExercise, UiWorkoutSet} from "../pages/workouts/ActiveWorkoutPage.tsx";
 import {formatSeries} from "../utils/formatSeries.ts";
 import TrashIcon from "./icons/TrashIcon.tsx";
 import ConfirmDialog from "./ConfirmDialog.tsx";

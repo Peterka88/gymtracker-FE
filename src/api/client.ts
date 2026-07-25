@@ -4,6 +4,7 @@ import { notifyError } from '../context/ToastContext.tsx'
 declare module 'axios' {
   export interface AxiosRequestConfig {
     skipErrorToast?: boolean
+    skipErrorToastStatuses?: number[]
   }
 }
 
@@ -27,7 +28,7 @@ client.interceptors.response.use(
       if (err.response?.status === 403) {
         localStorage.removeItem(TOKEN_KEY)
         window.location.href = '/'
-      } else if (!err.config?.skipErrorToast) {
+      } else if (!err.config?.skipErrorToast && !err.config?.skipErrorToastStatuses?.includes(err.response?.status)) {
         notifyError('Niečo sa pokazilo.')
       }
       return Promise.reject(err)
