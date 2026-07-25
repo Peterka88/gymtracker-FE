@@ -50,9 +50,9 @@ function AddExercisePage() {
     return (
         <div className="flex flex-col min-h-screen pb-8">
             <div className="flex items-center justify-between mt-5 mx-2">
-                <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-primary text-xl cursor-pointer">‹</button>
+                <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer">‹</button>
                 <div className="text-[24px] font-extrabold">Nový cvik</div>
-                <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-muted text-xl cursor-pointer">⨯</button>
+                <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-xl leading-none cursor-pointer">×</button>
             </div>
 
             <div className="flex flex-col items-center mt-8">

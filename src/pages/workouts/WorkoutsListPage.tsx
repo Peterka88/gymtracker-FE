@@ -98,6 +98,12 @@ function WorkoutsListPage() {
                 </div>
             )}
 
+            {!loading && workouts.length === 0 && (
+                <div className="flex flex-1 justify-center items-center text-text-muted font-medium">
+                    Zoznam tréningov je prázdny
+                </div>
+            )}
+
             {monthGroups.map((group) => (
                 <div key={group.month}>
                     <div className="px-[22px] pt-6 pb-1.5">

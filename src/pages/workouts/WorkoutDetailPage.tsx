@@ -37,13 +37,13 @@ function WorkoutDetailPage() {
         <div className="flex flex-col min-h-screen pb-28">
             <div className={"flex items-center justify-between px-5 pt-1.5 pb-3"}>
                 <button
-                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 justify-center text-xl cursor-pointer"
+                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-xl leading-none cursor-pointer"
                     onClick={() => navigate(-1)}>‹</button>
                 <div className="text-[16px] font-extrabold">Workout Detail</div>
                 <div className={"relative"}>
                     <button
                         onClick={() => setMenuOpen((open) => !open)}
-                        className="w-[38px] h-[38px] rounded-full text-base bg-btn border text-text-primary border-white/8 justify-center cursor-pointer">
+                        className="w-[38px] h-[38px] rounded-full text-base bg-btn border text-text-primary border-white/8 flex items-center justify-center leading-none cursor-pointer">
                         ⋯
                     </button>
                     { menuOpen && (

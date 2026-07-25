@@ -105,7 +105,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                         </div>
                                         <button
                                             onClick={() => setEditingIndex(null)}
-                                            className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-text-muted text-xs cursor-pointer"
+                                            className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-text-muted text-xs leading-none cursor-pointer"
                                         >
                                             ✕
                                         </button>
@@ -159,7 +159,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                     </div>
                                     <button
                                         onClick={() => setAddingSet(false)}
-                                        className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-text-muted text-xs cursor-pointer"
+                                        className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-text-muted text-xs leading-none cursor-pointer"
                                     >
                                         ✕
                                     </button>

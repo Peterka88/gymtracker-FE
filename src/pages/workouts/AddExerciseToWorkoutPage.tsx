@@ -98,16 +98,16 @@ function AddExerciseToWorkoutPage() {
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button
                     onClick={() => navigate(`/workouts/${id}/active`)}
-                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl cursor-pointer"
+                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer"
                 >
                     ‹
                 </button>
                 <div className="text-[17px] font-extrabold">Pridať cvik</div>
                 <button
                     onClick={() => navigate(`/workouts/${id}/active`)}
-                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-muted text-base cursor-pointer"
+                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-xl leading-none cursor-pointer"
                 >
-                    ⨯
+                    ×
                 </button>
             </div>
 

@@ -33,7 +33,7 @@ function Stepper({label, value, onChange, color, allowDecimals = true}: {
             <div className="flex items-center justify-center gap-2">
                 <button
                     onClick={() => commit(Math.max(0, value - 1))}
-                    className="shrink-0 w-7 h-7 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg cursor-pointer"
+                    className="shrink-0 w-7 h-7 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg leading-none cursor-pointer"
                 >
                     −
                 </button>
@@ -47,7 +47,7 @@ function Stepper({label, value, onChange, color, allowDecimals = true}: {
                 />
                 <button
                     onClick={() => commit(value + 1)}
-                    className="shrink-0 w-7 h-7 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg cursor-pointer"
+                    className="shrink-0 w-7 h-7 rounded-full bg-btn border border-white/10 flex items-center justify-center text-lg leading-none cursor-pointer"
                 >
                     +
                 </button>

@@ -382,7 +382,7 @@ function ActiveWorkoutPage() {
             <div className="flex items-center justify-between px-5 pt-1.5 pb-3">
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl cursor-pointer"
+                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer"
                 >
                     ‹
                 </button>
@@ -398,7 +398,7 @@ function ActiveWorkoutPage() {
                 <div className={"relative"}>
                     <button
                         onClick={() => setMenuOpen((open) => !open)}
-                        className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-base cursor-pointer">
+                        className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-base leading-none cursor-pointer">
                         ⋯
                     </button>
 

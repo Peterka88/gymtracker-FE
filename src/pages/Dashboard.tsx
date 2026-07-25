@@ -83,7 +83,7 @@ function Dashboard() {
             <TodayMeals meals={meals}/>
 
             <div className="flex items-center justify-between px-[22px] pt-[22px] pb-1.5">
-                <span className="text-[15px] font-extrabold">Posledné tréningy</span>
+                <span className="text-[15px] font-extrabold">Nedávne tréningy</span>
                 <button className="text-accent text-[12.5px] font-bold cursor-pointer" onClick={() => {navigate("/workouts")}}>
                     Všetky tréningy
                 </button>
@@ -98,6 +98,11 @@ function Dashboard() {
                 </div>
             ) : (
                 <div className="mx-5 px-1 bg-card border border-white/[0.09] rounded-3xl">
+                    {!workoutsLoading && recentWorkouts.length === 0 && (
+                        <div className="flex flex-1 justify-center items-center py-15 text-text-muted font-medium">
+                            Žiadne nedávne tréningy
+                        </div>
+                    )}
                     {recentWorkouts.map((workout, i) => (
                         <WorkoutRow id={workout.id} name={workout.name} date={workout.date} month={workout.month} pr={workout.pr} meta={workout.meta} index={i} />
                     ))}

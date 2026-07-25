@@ -111,7 +111,7 @@ function ExercisesListPage() {
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl cursor-pointer"
+                    className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer"
                 >
                     ‹
                 </button>
@@ -195,6 +195,12 @@ function ExercisesListPage() {
                 ))}
                 {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>
+
+            {!loading && exercises.length === 0 && (
+                <div className="flex flex-1 justify-center items-center text-text-muted font-medium">
+                    Zoznam cvikov je prázdny
+                </div>
+            )}
 
             {loading && hasMore && (
                 <div className="flex flex-1 justify-center items-center py-4">
