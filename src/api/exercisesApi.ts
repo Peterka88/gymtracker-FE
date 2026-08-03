@@ -1,5 +1,5 @@
 import {client} from "./client.ts";
-import type {Equipment, Exercise, MuscleGroup} from "../types/Exercises.ts";
+import type {Equipment, Exercise, ExerciseInfo, MuscleGroup} from "../types/Exercises.ts";
 import type {PageResponse} from "../types/PageResponse.ts";
 
 
@@ -20,5 +20,8 @@ export const exerciseApi = {
     },
     createExercise: (name: string, muscleGroup: MuscleGroup, equipment: Equipment) => {
         return client.post('/exercises', {name, muscleGroup, equipment}, {skipErrorToastStatuses: [400]})
+    },
+    info: () => {
+        return client.get<ExerciseInfo>('/exercises/info').then((res) => res.data);
     }
 }

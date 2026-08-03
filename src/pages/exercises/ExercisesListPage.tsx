@@ -11,6 +11,7 @@ import {
     muscleGroupsInCategory
 } from "../../types/Exercises.ts";
 import {exerciseApi} from "../../api/exercisesApi.ts";
+import { formatExercises } from "../../utils/formatSeries.ts";
 
 
 const CATEGORY_ALL = 'ALL' as const;
@@ -37,6 +38,7 @@ function ExercisesListPage() {
     const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<MuscleGroupFilter>(ALL_FILTER);
 
     const [exercises, setExercises] = useState<Exercise[]>([])
+    const [exercisesCount, setExercisesCount] = useState(0);
 
     const loadingRef = useRef(false);
     const [loading, setLoading] = useState(false);
@@ -63,6 +65,12 @@ function ExercisesListPage() {
                 setLoading(false)
             })
     }
+
+    useEffect(() => {
+        exerciseApi.info().then((data) => {
+            setExercisesCount(data.totalExercises)
+        })
+    }, []);
 
     const loadNextPageRef = useRef(loadNextPage)
     useEffect(() => {
@@ -117,7 +125,7 @@ function ExercisesListPage() {
                 </button>
                 <div className="flex-1 flex items-baseline gap-2 pl-3">
                     <span className="text-[22px] font-extrabold">Cviky</span>
-                    <span className="text-text-muted text-[13px]">{exercises.length} cvikov</span>
+                    <span className="text-text-muted text-[13px]">{formatExercises(exercisesCount)}</span>
                 </div>
                 <button
                     onClick={() => navigate('/exercises/create')}

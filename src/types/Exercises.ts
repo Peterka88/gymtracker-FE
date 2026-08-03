@@ -27,6 +27,10 @@ export interface Exercise {
     lastWeight: number | null
 }
 
+export interface ExerciseInfo {
+    totalExercises: number;
+}
+
 export const MuscleGroupCategory = {
     Hrudnik: 'Hrudník',
     Chrbat: 'Chrbát',

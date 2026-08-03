@@ -104,10 +104,10 @@ function AddExerciseToWorkoutPage() {
                 </button>
                 <div className="text-[17px] font-extrabold">Pridať cvik</div>
                 <button
-                    onClick={() => navigate(`/workouts/${id}/active`)}
+                    onClick={() => navigate('/exercises/create')}
                     className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-xl leading-none cursor-pointer"
                 >
-                    ×
+                    +
                 </button>
             </div>
 
