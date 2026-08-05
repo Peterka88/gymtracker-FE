@@ -1,6 +1,15 @@
 import {client} from "./client.ts";
-import type {Equipment, Exercise, ExerciseInfo, ExerciseStats, MuscleGroup} from "../types/Exercises.ts";
+import type {
+    Equipment,
+    Exercise,
+    ExerciseHistory,
+    ExerciseHistoryRow,
+    ExerciseInfo,
+    ExerciseStats,
+    MuscleGroup
+} from "../types/Exercises.ts";
 import type {PageResponse} from "../types/PageResponse.ts";
+import {formatRowDate} from "../utils/formatDateTime.ts";
 
 
 export const exerciseApi = {
@@ -27,5 +36,22 @@ export const exerciseApi = {
     exerciseStats: (id: number) => {
         return client.get<ExerciseStats>(`/exercises/${id}/stats`, {skipErrorToastStatuses: [404]})
             .then((res) => res.data);
+    },
+    exerciseHistory: (id: number, page = 0, size = 10) => {
+        return client.get<PageResponse<ExerciseHistory>>(`/exercises/${id}/history`, {params: {page, size}})
+            .then((res) => ({...res.data, content: res.data.content.map(toExerciseHistoryRowProps)}));
+    }
+}
+
+function toExerciseHistoryRowProps(record: ExerciseHistory): ExerciseHistoryRow {
+    const {day, month} = formatRowDate(record.date)
+    return {
+        id: record.id,
+        name: record.name,
+        date: day,
+        month,
+        pr: record.pr,
+        meta: `${record.setCount} série · ${record.totalReps} opakovaní · Objem ${record.volume.toLocaleString('sk-SK')} kg`,
+        weight: record.bestWeight
     }
 }

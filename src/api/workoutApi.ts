@@ -1,6 +1,8 @@
 import {client} from "./client.ts";
 import type {AxiosRequestConfig} from "axios";
 import type {WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
+import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
+import {formatRelativeDay, formatRowDate} from "../utils/formatDateTime.ts";
 
 interface WorkoutApiResponse {
     id: number;
@@ -67,32 +69,14 @@ export const workoutApi = {
     }
 }
 
-const MONTHS_SHORT = ['JAN', 'FEB', 'MAR', 'APR', 'MÁJ', 'JÚN', 'JÚL', 'AUG', 'SEP', 'OKT', 'NOV', 'DEC']
-const MONTHS_LOWER = ['jan', 'feb', 'marec', 'apríl', 'máj', 'jún', 'júl', 'august', 'september', 'október', 'november', 'december']
-
-function formatRelativeDay(target: Date): string {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const day = new Date(target)
-    day.setHours(0, 0, 0, 0)
-
-    const diffDays = Math.round((today.getTime() - day.getTime()) / (1000 * 60 * 60 * 24))
-
-    if (diffDays === 0) return 'Dnes'
-    if (diffDays === 1) return 'Včera'
-    if (diffDays > 1 && diffDays < 7) return `Pred ${diffDays} dňami`
-    return `${day.getDate()}. ${MONTHS_LOWER[day.getMonth()]}`
-}
-
-function toWorkoutRowProps(workout: WorkoutApiResponse) {
-    const parsedDate = new Date(workout.date)
-    const today = parsedDate.getDate().toString()
+function toWorkoutRowProps(workout: WorkoutApiResponse): WorkoutSummary {
+    const {day, month} = formatRowDate(workout.date)
     return {
         id: workout.id,
         name: workout.name,
-        date: today,
-        month: MONTHS_SHORT[parsedDate.getMonth()],
+        date: day,
+        month,
         pr: workout.pr,
-        meta: `${formatRelativeDay(parsedDate)} · ${workout.exercises} cvičení`
+        meta: `${formatRelativeDay(workout.date)} · ${workout.exercises} cvičení`
     }
 }

@@ -1,3 +1,4 @@
+import type {WorkoutSummary} from "./WorkoutSummary.ts";
 
 export type MuscleGroup =
     | "CHEST"
@@ -103,4 +104,19 @@ export interface ExerciseStats {
     lastTraining: number
     totalWorkouts: number
     progressData: ProgressData[]
+}
+
+export interface ExerciseHistory {
+    id: number
+    name: string
+    pr: boolean
+    date: string
+    bestWeight: number
+    setCount: number
+    totalReps: number
+    volume: number
+}
+
+export interface ExerciseHistoryRow extends WorkoutSummary {
+    weight: number
 }

@@ -1,6 +1,7 @@
 const DAYS = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota']
 const MONTHS = ['január', 'február', 'marec', 'apríl', 'máj', 'jún', 'júl', 'august', 'september', 'október', 'november', 'december']
 const MONTHS_GENITIVE = ['januára', 'februára', 'marca', 'apríla', 'mája', 'júna', 'júla', 'augusta', 'septembra', 'októbra', 'novembra', 'decembra']
+const MONTHS_SHORT = ['JAN', 'FEB', 'MAR', 'APR', 'MÁJ', 'JÚN', 'JÚL', 'AUG', 'SEP', 'OKT', 'NOV', 'DEC']
 
 function pad(value: number): string {
     return value.toString().padStart(2, '0')
@@ -38,6 +39,28 @@ export function formatShortDate(date: string): string {
     const month = Number(separatedDate[1])
 
     return `${day}.${month}.`
+}
+
+export function formatRowDate(date: string): { day: string; month: string } {
+    const parsed = new Date(date)
+    return {
+        day: parsed.getDate().toString(),
+        month: MONTHS_SHORT[parsed.getMonth()]
+    }
+}
+
+export function formatRelativeDay(date: string): string {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const day = new Date(date)
+    day.setHours(0, 0, 0, 0)
+
+    const diffDays = Math.round((today.getTime() - day.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 0) return 'Dnes'
+    if (diffDays === 1) return 'Včera'
+    if (diffDays > 1 && diffDays < 7) return `Pred ${diffDays} dňami`
+    return `${day.getDate()}. ${MONTHS[day.getMonth()]}`
 }
 
 export function formatTodayDate(): string {
