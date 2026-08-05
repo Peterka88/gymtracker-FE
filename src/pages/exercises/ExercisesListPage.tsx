@@ -86,7 +86,13 @@ function ExercisesListPage() {
                 : undefined
 
 
+    const isFirstFilterRun = useRef(true)
     useEffect(() => {
+        if (isFirstFilterRun.current) {
+            isFirstFilterRun.current = false
+            return
+        }
+
         const timeout = setTimeout(() => {
             requestIdRef.current += 1
             loadingRef.current = false
