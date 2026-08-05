@@ -32,6 +32,14 @@ export function formatLastPerformedExerciseDate(date: string | null): string {
     return `${day}. ${month}`
 }
 
+export function formatShortDate(date: string): string {
+    const separatedDate = date.split('-')
+    const day = Number(separatedDate[2])
+    const month = Number(separatedDate[1])
+
+    return `${day}.${month}.`
+}
+
 export function formatTodayDate(): string {
     const today = new Date()
     return `${DAYS[today.getDay()]}, ${today.getDate()}. ${MONTHS_GENITIVE[today.getMonth()]}`

@@ -8,9 +8,10 @@ interface WorkoutRowProps {
     pr: boolean
     meta: string
     index: number
+    weight?: number
 }
 
-function WorkoutRow({id, name, date, month, pr, meta, index}:WorkoutRowProps) {
+function WorkoutRow({id, name, date, month, pr, meta, index, weight}:WorkoutRowProps) {
     const navigate = useNavigate();
 
     return(
@@ -37,7 +38,13 @@ function WorkoutRow({id, name, date, month, pr, meta, index}:WorkoutRowProps) {
                 </div>
                 <div className="text-text-muted text-xs mt-0.5 align-bottom">{meta}</div>
             </div>
-            <span className="text-text-muted text-xs mt-0.5">›</span>
+            {weight !== undefined ? (
+                <span className="text-[14px] font-extrabold shrink-0">
+                    {weight} <span className="text-text-muted text-[11px] font-semibold">kg</span>
+                </span>
+            ) : (
+                <span className="text-text-muted text-xs mt-0.5">›</span>
+            )}
         </div>
     )}
 

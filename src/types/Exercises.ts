@@ -88,3 +88,19 @@ export function muscleGroupsInCategory(category: MuscleGroupCategory): MuscleGro
         (group) => muscleGroupCategory[group] === category
     );
 }
+
+export interface ProgressData {
+    date: string
+    weight: number
+    volume: number
+    estimated1RM: number
+}
+
+export interface ExerciseStats {
+    id: number
+    name: string
+    pr: number
+    lastTraining: number
+    totalWorkouts: number
+    progressData: ProgressData[]
+}

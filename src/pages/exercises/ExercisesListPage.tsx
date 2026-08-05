@@ -199,7 +199,9 @@ function ExercisesListPage() {
                         muscleGroup={exercise.muscleGroup}
                         equipment={exercise.equipment}
                         lastDate={exercise.lastDate}
-                        lastWeight={exercise.lastWeight} />
+                        lastWeight={exercise.lastWeight}
+                        onClick={() => navigate(`/exercises/${exercise.id}`)}
+                    />
                 ))}
                 {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>

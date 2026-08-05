@@ -1,5 +1,5 @@
 import {client} from "./client.ts";
-import type {Equipment, Exercise, ExerciseInfo, MuscleGroup} from "../types/Exercises.ts";
+import type {Equipment, Exercise, ExerciseInfo, ExerciseStats, MuscleGroup} from "../types/Exercises.ts";
 import type {PageResponse} from "../types/PageResponse.ts";
 
 
@@ -23,5 +23,9 @@ export const exerciseApi = {
     },
     info: () => {
         return client.get<ExerciseInfo>('/exercises/info').then((res) => res.data);
+    },
+    exerciseStats: (id: number) => {
+        return client.get<ExerciseStats>(`/exercises/${id}/stats`, {skipErrorToastStatuses: [404]})
+            .then((res) => res.data);
     }
 }
