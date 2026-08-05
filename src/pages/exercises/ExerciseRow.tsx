@@ -24,12 +24,13 @@ function Sparkline({ data }:{ data:number[] }) {
     )
 }
 
-function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight}: {
+function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight, onClick}: {
     name: string
     muscleGroup: MuscleGroup
     equipment: Equipment
     lastDate: string | null
     lastWeight: number | null
+    onClick: () => void
 }) {
 
     const equipmentIcons: Record<Equipment, React.JSX.Element> = {
@@ -41,7 +42,8 @@ function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight}: {
     }
 
     return (
-        <div className="flex items-center gap-[13px] py-[13px] border-b border-white/5 last:border-b-0 cursor-pointer">
+        <div onClick={onClick}
+             className="flex items-center gap-[13px] py-[13px] border-b border-white/5 last:border-b-0 cursor-pointer">
             <div className="w-[46px] h-[46px] rounded-2xl bg-btn border border-white/8 flex items-center justify-center shrink-0 text-text-secondary">
                 {equipmentIcons[equipment]}
             </div>

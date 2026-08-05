@@ -7,3 +7,13 @@ export function formatSeries(count:number): string {
         return `${count} sérií`;
     }
 }
+
+export function formatExercises(count:number): string {
+    if (count == 1) {
+        return `${count} cvik`
+    } else if (count > 1 && count < 5) {
+        return `${count} cviky`
+    } else {
+        return `${count} cvikov`
+    }
+}

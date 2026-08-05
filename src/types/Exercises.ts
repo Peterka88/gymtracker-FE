@@ -1,3 +1,4 @@
+import type {WorkoutSummary} from "./WorkoutSummary.ts";
 
 export type MuscleGroup =
     | "CHEST"
@@ -25,6 +26,10 @@ export interface Exercise {
     equipment: Equipment
     lastDate: string | null
     lastWeight: number | null
+}
+
+export interface ExerciseInfo {
+    totalExercises: number;
 }
 
 export const MuscleGroupCategory = {
@@ -83,4 +88,35 @@ export function muscleGroupsInCategory(category: MuscleGroupCategory): MuscleGro
     return (Object.keys(muscleGroupCategory) as MuscleGroup[]).filter(
         (group) => muscleGroupCategory[group] === category
     );
+}
+
+export interface ProgressData {
+    date: string
+    weight: number
+    volume: number
+    estimated1RM: number
+}
+
+export interface ExerciseStats {
+    id: number
+    name: string
+    pr: number
+    lastTraining: number
+    totalWorkouts: number
+    progressData: ProgressData[]
+}
+
+export interface ExerciseHistory {
+    id: number
+    name: string
+    pr: boolean
+    date: string
+    bestWeight: number
+    setCount: number
+    totalReps: number
+    volume: number
+}
+
+export interface ExerciseHistoryRow extends WorkoutSummary {
+    weight: number
 }

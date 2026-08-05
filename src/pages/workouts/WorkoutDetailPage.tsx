@@ -76,7 +76,7 @@ function WorkoutDetailPage() {
                 <>
                     <div className="px-5 mt-2">
                         <div className="flex items-center gap-2">
-                            <span className="font-extrabold text-3xl text-white">Push deň</span>
+                            <span className="font-extrabold text-3xl text-white">{workoutDetail.name}</span>
                             <span
                                 className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-carbs/[0.16] text-carbs text-[11px] font-extrabold">
                                 🏆 PR
