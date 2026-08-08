@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState, type ReactNode, useEffect} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
 import DumbbellIcon from "../../components/icons/DumbbellIcon.tsx";
@@ -35,9 +35,12 @@ const equipmentIcons: Record<Equipment, () => ReactNode> = {
 const muscleGroups = Object.keys(muscleGroupLabel) as MuscleGroup[]
 const equipmentOptions = Object.keys(equipmentLabel) as Equipment[]
 
-function AddExercisePage() {
+function AddEditExercisePage() {
+
+    const { id } = useParams<{id: string}>();
 
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [exerciseName, setExerciseName] = useState('');
     const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<MuscleGroup>('CHEST');
     const [selectedEquipment, setSelectedEquipment] = useState<Equipment>('BARBELL');
@@ -45,13 +48,36 @@ function AddExercisePage() {
     // const [trackReps, setTrackReps] = useState(true);
     // const [trackPr, setTrackPr] = useState(true);
 
+    useEffect(() => {
+        if (!id) return;
+
+        exerciseApi.getExerciseById(Number(id))
+            .then((exercise) => {
+                setExerciseName(exercise.name);
+                setSelectedMuscleGroup(exercise.muscleGroup);
+                setSelectedEquipment(exercise.equipment);
+                setLoading(false)
+            })
+            .catch(() => {
+                navigate('/exercises');
+            });
+    }, [id]);
+
+    if (id && loading) {
+        return (
+            <div className="flex flex-1 justify-center min-h-screen items-center py-4">
+                <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
+            </div>
+        )
+    }
+
     const { showSuccess, showError } = useToast()
 
     return (
         <div className="flex flex-col min-h-screen pb-8">
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer">‹</button>
-                <div className="text-[24px] font-extrabold">Nový cvik</div>
+                <div className="text-[20px] font-extrabold">{(id) ? "Úprava cviku" : "Nový cvik"}</div>
                 <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-xl leading-none cursor-pointer">×</button>
             </div>
 
@@ -62,7 +88,7 @@ function AddExercisePage() {
             </div>
 
             <div className="mt-7 px-5">
-                <div className="text-text-muted text-[11px] font-bold tracking-[0.08em] uppercase mb-2">Názov cviku</div>
+                <div className="text-text-muted text-[11px] font-bold tracking-[0.08em] uppercase mb-2">Názov</div>
                 <input
                     value={exerciseName}
                     onChange={(event) => setExerciseName(event.target.value)}
@@ -132,9 +158,13 @@ function AddExercisePage() {
             <div className="px-5 mt-8">
                 <button
                     onClick={() => {
-                        exerciseApi.createExercise(exerciseName, selectedMuscleGroup, selectedEquipment)
+                        const request = id
+                            ? exerciseApi.updateExercise(Number(id), exerciseName, selectedMuscleGroup, selectedEquipment)
+                            : exerciseApi.createExercise(exerciseName, selectedMuscleGroup, selectedEquipment)
+
+                        request
                             .then(()=> {
-                                showSuccess("Cvik uložený")
+                                showSuccess(id ? "Cvik upravený" : "Cvik uložený")
                                 navigate(-1)
                             })
                             .catch((err) => {
@@ -144,11 +174,11 @@ function AddExercisePage() {
                             })
                     }}
                     className="w-full bg-accent text-on-accent rounded-2xl py-4 text-[15px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer">
-                    Vytvoriť cvik
+                    {(id) ? "Aktualizovať cvik" : "Vytvoriť cvik"}
                 </button>
             </div>
         </div>
     )
 }
 
-export default AddExercisePage
+export default AddEditExercisePage

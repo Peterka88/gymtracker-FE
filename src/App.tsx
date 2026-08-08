@@ -4,7 +4,7 @@ import Login from "./pages/Login.tsx";
 import {Route, BrowserRouter as Router, Routes} from "react-router-dom";
 import Dashboard from "./pages/Dashboard.tsx";
 import WorkoutsListPage from "./pages/workouts/WorkoutsListPage.tsx";
-import AddExercisePage from "./pages/exercises/AddExercisePage.tsx"
+import AddEditExercisePage from "./pages/exercises/AddEditExercisePage.tsx"
 import ExercisesListPage from "./pages/exercises/ExercisesListPage.tsx"
 import ActiveWorkoutPage from "./pages/workouts/ActiveWorkoutPage.tsx"
 import AddExerciseToWorkoutPage from "./pages/workouts/AddExerciseToWorkoutPage.tsx"
@@ -27,13 +27,14 @@ function App() {
                     <Route element={<ProtectedRoute />}>
                         <Route path={"/dashboard"} element={<Dashboard />} />
                         <Route path={"/workouts"} element={<WorkoutsListPage />} />
-                        <Route path={"/exercises/create"} element={<AddExercisePage />} />
+                        <Route path={"/exercises/create"} element={<AddEditExercisePage />} />
                         <Route path={"/exercises"} element={<ExercisesListPage />} />
                         <Route path={"/workouts/new"} element={<ActiveWorkoutPage />} />
                         <Route path={"/workouts/:id/active"} element={<ActiveWorkoutPage />} />
                         <Route path={"/workouts/:id/add-exercise"} element={<AddExerciseToWorkoutPage />} />
                         <Route path={"/workouts/:id"} element={<WorkoutDetailPage />} />
                         <Route path={"/exercises/:id"} element={<ExerciseDetailPage />} />
+                        <Route path={"/exercises/:id/edit"} element={<AddEditExercisePage />} />
 
                     </Route>
                 </Routes>

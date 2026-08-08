@@ -41,11 +41,14 @@ export const exerciseApi = {
         return client.get<PageResponse<ExerciseHistory>>(`/exercises/${id}/history`, {params: {page, size}})
             .then((res) => ({...res.data, content: res.data.content.map(toExerciseHistoryRowProps)}));
     },
-    exerciseUpdate: (id: number, name: string, muscleGroup: MuscleGroup, equipment: Equipment)=> {
+    updateExercise: (id: number, name: string, muscleGroup: MuscleGroup, equipment: Equipment)=> {
         return client.put(`/exercises/${id}`, {name, muscleGroup, equipment}, {skipErrorToastStatuses: [400]})
     },
-    exerciseDelete: (id: number) => {
+    deleteExercise: (id: number) => {
         return client.delete(`/exercises/${id}`, {skipErrorToastStatuses: [404]})
+    },
+    getExerciseById: (id: number)=> {
+        return client.get<Exercise>(`/exercises/${id}`, {skipErrorToastStatuses: [404]}).then((res) => res.data)
     }
 }
 
