@@ -135,7 +135,7 @@ function AddExercisePage() {
                         exerciseApi.createExercise(exerciseName, selectedMuscleGroup, selectedEquipment)
                             .then(()=> {
                                 showSuccess("Cvik uložený")
-                                navigate('/exercises')
+                                navigate(-1)
                             })
                             .catch((err) => {
                                 if (axios.isAxiosError(err) && err.response?.status === 400) {

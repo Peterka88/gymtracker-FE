@@ -40,6 +40,12 @@ export const exerciseApi = {
     exerciseHistory: (id: number, page = 0, size = 10) => {
         return client.get<PageResponse<ExerciseHistory>>(`/exercises/${id}/history`, {params: {page, size}})
             .then((res) => ({...res.data, content: res.data.content.map(toExerciseHistoryRowProps)}));
+    },
+    exerciseUpdate: (id: number, name: string, muscleGroup: MuscleGroup, equipment: Equipment)=> {
+        return client.put(`/exercises/${id}`, {name, muscleGroup, equipment}, {skipErrorToastStatuses: [400]})
+    },
+    exerciseDelete: (id: number) => {
+        return client.delete(`/exercises/${id}`, {skipErrorToastStatuses: [404]})
     }
 }
 
