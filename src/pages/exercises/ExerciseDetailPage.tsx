@@ -6,7 +6,7 @@ import TrashIcon from "../../components/icons/TrashIcon.tsx";
 import PencilIcon from "../../components/icons/PencilIcon.tsx";
 import WorkoutRow from "../../components/WorkoutRow.tsx";
 import {formatShortDate} from "../../utils/formatDateTime.ts";
-import type {ExerciseHistoryRow, ExerciseStats, ProgressData} from "../../types/Exercises.ts";
+import {equipmentLabel, muscleGroupLabel, type ExerciseHistoryRow, type ExerciseStats, type ProgressData} from "../../types/Exercises.ts";
 import {exerciseApi} from "../../api/exercisesApi.ts";
 import {useToast} from "../../context/ToastContext.tsx";
 import BottomNav from "../../components/BottomNav.tsx";
@@ -212,6 +212,14 @@ function ExerciseDetailPage() {
                             </button>
                         </div>
                     )}
+                </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 -mt-1.5">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-[12.5px] font-bold">
+                    {muscleGroupLabel[exerciseStats.muscleGroup]}
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-chip border border-white/10 text-text-secondary text-[12.5px] font-bold">
+                    {equipmentLabel[exerciseStats.equipment]}
                 </div>
             </div>
             <div className="flex gap-2.5 px-5 pt-2">

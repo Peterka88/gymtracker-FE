@@ -100,6 +100,8 @@ export interface ProgressData {
 export interface ExerciseStats {
     id: number
     name: string
+    muscleGroup: MuscleGroup
+    equipment: Equipment
     pr: number
     lastTraining: number
     totalWorkouts: number
