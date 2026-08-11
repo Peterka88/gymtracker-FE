@@ -124,7 +124,7 @@ function ExercisesListPage() {
         <div className="flex flex-col min-h-screen pb-28">
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate(-1)}
                     className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer"
                 >
                     ‹

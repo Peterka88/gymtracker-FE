@@ -18,6 +18,7 @@ function Sparkline({ data }:{ data:number[] }) {
                 stroke='var(--color-accent)'
                 strokeWidth={2}
                 dot={false}
+                activeDot={false}
                 isAnimationActive={false}
             />
         </LineChart>

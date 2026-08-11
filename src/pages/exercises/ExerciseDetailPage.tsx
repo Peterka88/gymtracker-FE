@@ -6,10 +6,11 @@ import TrashIcon from "../../components/icons/TrashIcon.tsx";
 import PencilIcon from "../../components/icons/PencilIcon.tsx";
 import WorkoutRow from "../../components/WorkoutRow.tsx";
 import {formatShortDate} from "../../utils/formatDateTime.ts";
-import type {ExerciseHistoryRow, ExerciseStats, ProgressData} from "../../types/Exercises.ts";
+import {equipmentLabel, muscleGroupLabel, type ExerciseHistoryRow, type ExerciseStats, type ProgressData} from "../../types/Exercises.ts";
 import {exerciseApi} from "../../api/exercisesApi.ts";
 import {useToast} from "../../context/ToastContext.tsx";
 import BottomNav from "../../components/BottomNav.tsx";
+import ConfirmDialog from "../../components/ConfirmDialog.tsx";
 
 type ProgressMetric = 'weight' | 'volume' | 'estimated1RM'
 
@@ -103,9 +104,10 @@ function ExerciseDetailPage() {
     const { id } = useParams<{id: string}>()
     const navigate = useNavigate()
 
-    const { showError } = useToast()
+    const { showError, showSuccess } = useToast()
 
     const [menuOpen, setMenuOpen] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
     const [selectedGraph, setSelectedGraph] = useState<ProgressMetric>(graphSwitcher[0].metric);
     const [exerciseStats, setExerciseStats] = useState<ExerciseStats | null>(null);
     const [exerciseHistory, setExerciseHistory] = useState<ExerciseHistoryRow[]>([]);
@@ -197,10 +199,27 @@ function ExerciseDetailPage() {
                             onClick={() => setMenuOpen((open) => !open)}>⋯</button>
                     { menuOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-btn border border-white/[0.07] rounded-xl overflow-hidden z-10 shadow-lg">
-                            <button className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] text-white font-semibold hover:bg-white/10 cursor-pointer transition-colors"><PencilIcon size={14} /> Upravit cvik</button>
-                            <button className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-red-500/10 cursor-pointer transition-colors"><TrashIcon size={14}/>Vymazať cvik</button>
+                            <button
+                                onClick={() => navigate(`/exercises/${id}/edit`)}
+                                className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] text-white font-semibold hover:bg-white/10 cursor-pointer transition-colors"><PencilIcon size={14} /> Upravit cvik</button>
+                            <button
+                                onClick={() => {
+                                    setMenuOpen(false)
+                                    setConfirmDelete(true)
+                                }}
+                                className="w-full flex items-center gap-2 text-left px-4 py-3 text-[13.5px] font-semibold text-red-500 hover:bg-red-500/10 cursor-pointer transition-colors">
+                                <TrashIcon size={14}/>Vymazať cvik
+                            </button>
                         </div>
                     )}
+                </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 -mt-1.5">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-[12.5px] font-bold">
+                    {muscleGroupLabel[exerciseStats.muscleGroup]}
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-chip border border-white/10 text-text-secondary text-[12.5px] font-bold">
+                    {equipmentLabel[exerciseStats.equipment]}
                 </div>
             </div>
             <div className="flex gap-2.5 px-5 pt-2">
@@ -287,6 +306,22 @@ function ExerciseDetailPage() {
                     <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
                 </div>
             )}
+
+            {confirmDelete && <ConfirmDialog
+                title={"Vymazať cvik"}
+                description={"Vymažu sa aj všetky záznamy s týmto cvikom. Naozaj chcete vymazať cvik?"}
+                onConfirm={() => {
+                    exerciseApi.deleteExercise(Number(id))
+                        .then(() => {
+                            navigate("/exercises")
+                            showSuccess("Cvik vymazaný")
+                        })
+                }}
+                onCancel={() => setConfirmDelete(false)}
+                confirmLabel={"Vymazať"}
+                cancelLabel={"Zavrieť"}
+                confirmColor={"red"} />
+            }
 
             <BottomNav />
         </div>
