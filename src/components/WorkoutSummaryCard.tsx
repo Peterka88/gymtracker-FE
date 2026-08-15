@@ -7,14 +7,14 @@ function WorkoutSummaryCard(exercise: SessionExercise) {
 
     return(
         <div className="mt-3 first:mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl">
-            <div className="flex items-center justify-between cursor-pointer">
-                <div className="flex items-center gap-1.5 text-[14.5px] font-extrabold">
-                    {exercise.exerciseName}
+            <div className="flex items-center justify-between gap-2 cursor-pointer">
+                <div className="flex items-center gap-1.5 text-[14.5px] font-extrabold min-w-0">
+                    <span className="truncate">{exercise.exerciseName}</span>
                     {pr && (
-                        <span className="px-1.5 py-0.5 items-center bg-carbs/[0.16] rounded-md text-carbs text-[9.5px] font-extrabold">🏆 PR</span>
+                        <span className="shrink-0 px-1.5 py-0.5 items-center bg-carbs/[0.16] rounded-md text-carbs text-[9.5px] font-extrabold">🏆 PR</span>
                     )}
                 </div>
-                <span className="text-text-muted text-[11.5px] flex font-bold items-center gap-1">{formatSeries(exercise.workoutSets.length)}</span>
+                <span className="shrink-0 text-text-muted text-[11.5px] flex font-bold items-center gap-1">{formatSeries(exercise.workoutSets.length)}</span>
             </div>
             <div className="grid">
                 <div className="pt-2 grid grid-cols-3 text-text-faint text-[12px] font-bold uppercase tracking-[0.05em] px-1 pb-1.5">
@@ -41,7 +41,7 @@ function WorkoutSummaryCard(exercise: SessionExercise) {
                     <span className="text-text-faint text-[11px] font-bold uppercase tracking-[0.05em] px-1 pb-1.5">Poznámka</span>
                     <textarea readOnly
                               className={`w-full placeholder:text-text-faint ${!exercise.note ? 'italic' : '' } px-1 text-[12.5px] resize-none outline-none text-text-primary`}
-                              placeholder="＋ Pridať `poznámku"
+                              placeholder="＋ Pridať poznámku"
                               value={exercise.note}
                     />
                 </div>

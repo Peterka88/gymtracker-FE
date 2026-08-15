@@ -49,10 +49,10 @@ function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight, onClic
                 {equipmentIcons[equipment]}
             </div>
             <div className="flex-1 min-w-0">
-                <div className="flex items-center text-[14.5px] font-bold">
+                <div className="truncate text-[14.5px] font-bold">
                     {name}
                 </div>
-                <div className="text-text-muted text-xs mt-0.5">
+                <div className="text-text-muted text-xs mt-0.5 truncate">
                     {muscleGroupLabel[muscleGroup]} · {formatLastPerformedExerciseDate(lastDate)}
                     {lastWeight !== null && ` · ${lastWeight} kg`}
                 </div>

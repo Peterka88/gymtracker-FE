@@ -166,6 +166,7 @@ function ExercisesListPage() {
                         onClick={() => {
                             setSelectedCategory(filter)
                             setSelectedMuscleGroup(ALL_FILTER)
+                            setExercises([])
                         }}
                         className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold cursor-pointer transition-colors duration-150 ${
                             selectedCategory === filter
