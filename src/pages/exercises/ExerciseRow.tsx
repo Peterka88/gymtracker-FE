@@ -25,12 +25,13 @@ function Sparkline({ data }:{ data:number[] }) {
     )
 }
 
-function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight, onClick}: {
+function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight, lastWeights, onClick}: {
     name: string
     muscleGroup: MuscleGroup
     equipment: Equipment
     lastDate: string | null
     lastWeight: number | null
+    lastWeights: number[] | null
     onClick: () => void
 }) {
 
@@ -57,7 +58,11 @@ function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight, onClic
                     {lastWeight !== null && ` · ${lastWeight} kg`}
                 </div>
             </div>
-            <Sparkline data={[10, 50, 80, 100, 120, 150]} />
+            {lastWeights && lastWeights.length > 0 ? (
+                <Sparkline data={lastWeights} />
+            ) : (
+                <span className="w-16 text-center text-text-faint text-xs shrink-0">NaN</span>
+            )}
             <span className="text-text-faint text-lg">›</span>
         </div>
     )

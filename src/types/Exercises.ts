@@ -26,6 +26,7 @@ export interface Exercise {
     equipment: Equipment
     lastDate: string | null
     lastWeight: number | null
+    lastWeights: number[] | null
 }
 
 export interface ExerciseInfo {
