@@ -162,7 +162,7 @@ function AddExerciseToWorkoutPage() {
         : [];
 
     return (
-        <div className="flex flex-col min-h-screen pb-8">
+        <div className="flex flex-col min-h-screen pb-28">
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button
                     onClick={() => navigate(`/workouts/${id}/active`)}
@@ -308,7 +308,7 @@ function AddExerciseToWorkoutPage() {
                 </div>
             )}
 
-            <div className="px-5 mt-6">
+            <div className="fixed left-0 right-0 bottom-0 max-w-[430px] mx-auto z-20 bg-bg border-t border-white/8 px-5 pt-3 pb-6">
                 <button
                     disabled={selectedExercises.length === 0}
                     onClick={() => workoutApi.addExercise(Number(id), selectedIds).then(
