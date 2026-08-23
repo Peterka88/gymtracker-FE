@@ -23,9 +23,15 @@ export const exerciseApi = {
           }
       }).then((res) => res.data)
     },
-    addToWorkout: (page = 0, size = 10) => {
-        return client.get<PageResponse<Exercise>>('/exercises/workout', {params: {page, size}})
-            .then((res) => res.data)
+    addToWorkout: (page: number, size: number, muscleGroups?: MuscleGroup[], search?: string) => {
+        return client.get<PageResponse<Exercise>>('/exercises/workout', {
+            params: {
+                search: search || undefined,
+                muscleGroups: muscleGroups?.length ? muscleGroups.join(',') : undefined,
+                page,
+                size
+            }
+        }).then((res) => res.data)
     },
     createExercise: (name: string, muscleGroup: MuscleGroup, equipment: Equipment) => {
         return client.post('/exercises', {name, muscleGroup, equipment}, {skipErrorToastStatuses: [400]})

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {
     MuscleGroupCategory,
@@ -10,7 +10,6 @@ import {
 import { exerciseApi } from "../../api/exercisesApi.ts";
 import SearchIcon from "../../components/icons/SearchIcon.tsx";
 import {workoutApi} from "../../api/workoutApi.ts";
-import type {PageResponse} from "../../types/PageResponse.ts";
 import { useToast } from "../../context/ToastContext.tsx"
 
 function ChevronDownIcon() {
@@ -26,39 +25,107 @@ const categoryFilters: (MuscleGroupCategory | 'Všetko')[] = ['Všetko', ...Obje
 
 function AddExerciseToWorkoutPage() {
 
+    const size = 10;
+
     const { id } = useParams<{id: string}>()
     const { showSuccess } = useToast()
 
     const navigate = useNavigate();
+
     const [search, setSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<MuscleGroupCategory | 'Všetko'>('Všetko');
     const [selectedGroup, setSelectedGroup] = useState<MuscleGroup | null>(null);
     const [subFiltersOpen, setSubFiltersOpen] = useState(false);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [exercises, setExercises] = useState<Exercise[]>([]);
-
-    const [page, setPage] = useState(0);
-    const [pageInfo, setPageInfo] = useState<PageResponse<Exercise>>(
-        {
-            last: false,
-            content: [],
-            page: 0,
-            size: 0,
-            totalElements: 0,
-            totalPages: 0
-        }
-    )
-    const [loading, setLoading] = useState(true)
-
+    const [loading, setLoading] = useState(false)
+    const [hasMore, setHasMore] = useState(true)
+    const [existingExerciseIds, setExistingExerciseIds] = useState<number[]>([]);
 
     useEffect(() => {
-        exerciseApi.addToWorkout(page, 5).then((data) => {
-            setExercises(data.content)
-            setPage(page + 1)
-            setPageInfo(data)
-            setLoading(false)
+        if (!id) return
+        workoutApi.getById(Number(id)).then((data) => {
+            setExistingExerciseIds(data.sessionExercises.map((sessionExercise) => sessionExercise.exerciseId))
         })
-    }, []);
+    }, [id]);
+
+    const loadingRef = useRef(false)
+    const pageRef = useRef(0)
+    const requestIdRef = useRef(0)
+    const sentinelRef = useRef<HTMLDivElement>(null)
+
+    const activeMuscleGroups: MuscleGroup[] | undefined =
+        selectedGroup !== null ? [selectedGroup]
+            : selectedCategory !== 'Všetko'
+                ? muscleGroupsInCategory(selectedCategory)
+                : undefined
+
+    const loadNextPage = (pageToLoad: number) => {
+        if (loadingRef.current || !hasMore) return
+        loadingRef.current = true
+        setLoading(true)
+        const requestId = requestIdRef.current
+        exerciseApi.addToWorkout(pageToLoad, size, activeMuscleGroups, search)
+            .then((data) => {
+                if (requestIdRef.current !== requestId) return
+                setExercises((curr) => [...curr, ...data.content])
+                setHasMore(!data.last)
+                pageRef.current = pageToLoad + 1
+            }).finally(() => {
+                if (requestIdRef.current !== requestId) return
+                loadingRef.current = false
+                setLoading(false)
+        })
+    }
+
+    const resetAndLoad = () => {
+        requestIdRef.current += 1
+        loadingRef.current = false
+        setExercises([])
+        setLoading(false)
+        setHasMore(true)
+        pageRef.current = 0
+        loadNextPage(0)
+    }
+
+    const loadNextPageRef = useRef(loadNextPage)
+    useEffect(() => {
+        loadNextPageRef.current = loadNextPage
+    });
+
+    const isFirstSearchRun = useRef(true)
+    useEffect(() => {
+        if (isFirstSearchRun.current) {
+            isFirstSearchRun.current = false
+            return
+        }
+        const timeout = setTimeout(resetAndLoad, 300)
+        return () => clearTimeout(timeout)
+    }, [search]);
+
+
+    const isFirstFilterRun = useRef(true)
+    useEffect(() => {
+        if (isFirstFilterRun.current) {
+            isFirstFilterRun.current = false
+            return
+        }
+        resetAndLoad()
+    }, [selectedGroup, selectedCategory]);
+
+    useEffect(() => {
+        const node = sentinelRef.current
+        if (!node) return
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) loadNextPageRef.current(pageRef.current)
+            },
+            { rootMargin: '200px'}
+        )
+        observer.observe(node)
+        return () => observer.disconnect()
+    }, [hasMore, exercises.length]);
 
     function selectCategory(category: MuscleGroupCategory | 'Všetko') {
         setSelectedCategory(category);
@@ -85,6 +152,7 @@ function AddExerciseToWorkoutPage() {
 
     const unselectedExercises = (exercises) ? exercises
         .filter((exercise) => !selectedIds.includes(exercise.id))
+        .filter((exercise) => !existingExerciseIds.includes(exercise.id))
         .filter((exercise) => {
             if (selectedCategory === 'Všetko') return true;
             if (selectedGroup) return exercise.muscleGroup === selectedGroup;
@@ -212,7 +280,7 @@ function AddExerciseToWorkoutPage() {
 
             <div className="px-5 mt-5">
                 <div className="text-text-faint text-[11px] font-bold tracking-[0.08em] uppercase mb-1">
-                    Všetky cviky ({pageInfo.totalElements})
+                    Všetky cviky ({unselectedExercises.length})
                 </div>
                 {unselectedExercises.map((exercise) => (
                     <div
@@ -231,23 +299,14 @@ function AddExerciseToWorkoutPage() {
                         </div>
                     </div>
                 ))}
+                {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>
 
-            {!pageInfo.last  && !loading && (
-                <button
-                    className={"mx-5 mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl font-bold text-center cursor-pointer hover:bg-card-hover transition-all duration-150 hover:brightness-110 active:scale-[0.97]"}
-                    onClick={() => {
-                        exerciseApi.addToWorkout(page, 5).then((data) => {
-                            setExercises((current) => [...current, ...data.content])
-                            setPage(page+1)
-                            setPageInfo(data)
-                        })
-                    }}
-                >
-                    Načítať ďalšie
-                </button>
+            {!loading && !hasMore && exercises.length === 0 && (
+                <div className="flex flex-1 justify-center items-center text-text-muted font-medium">
+                    Zoznam cvikov je prázdny
+                </div>
             )}
-
 
             <div className="px-5 mt-6">
                 <button

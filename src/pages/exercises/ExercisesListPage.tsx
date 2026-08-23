@@ -56,7 +56,7 @@ function ExercisesListPage() {
         exerciseApi.getExercises(pageToLoad, size, activeMuscleGroups, search)
             .then((data) => {
                 if (requestIdRef.current !== requestId) return
-                setExercises((curr) => [...curr, ...data.content])
+                setExercises((curr) => pageToLoad === 0 ? data.content : [...curr, ...data.content])
                 setHasMore(!data.last)
                 pageRef.current = pageToLoad + 1
             }).finally(() => {
@@ -86,25 +86,33 @@ function ExercisesListPage() {
                 : undefined
 
 
+    const resetAndLoad = () => {
+        requestIdRef.current += 1
+        loadingRef.current = false
+        setLoading(false)
+        setHasMore(true)
+        pageRef.current = 0
+        loadNextPage(0)
+    }
+
     const isFirstFilterRun = useRef(true)
     useEffect(() => {
         if (isFirstFilterRun.current) {
             isFirstFilterRun.current = false
             return
         }
+        resetAndLoad()
+    }, [selectedMuscleGroup, selectedCategory]);
 
-        const timeout = setTimeout(() => {
-            requestIdRef.current += 1
-            loadingRef.current = false
-            setLoading(false)
-            setExercises([])
-            setHasMore(true)
-            pageRef.current = 0
-            loadNextPage(0)
-        }, 300)
-
+    const isFirstSearchRun = useRef(true)
+    useEffect(() => {
+        if (isFirstSearchRun.current) {
+            isFirstSearchRun.current = false
+            return
+        }
+        const timeout = setTimeout(resetAndLoad, 300)
         return () => clearTimeout(timeout)
-    }, [selectedMuscleGroup, selectedCategory, search]);
+    }, [search]);
 
     useEffect(() => {
         const node = sentinelRef.current
@@ -166,7 +174,6 @@ function ExercisesListPage() {
                         onClick={() => {
                             setSelectedCategory(filter)
                             setSelectedMuscleGroup(ALL_FILTER)
-                            setExercises([])
                         }}
                         className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold cursor-pointer transition-colors duration-150 ${
                             selectedCategory === filter
@@ -207,13 +214,14 @@ function ExercisesListPage() {
                         equipment={exercise.equipment}
                         lastDate={exercise.lastDate}
                         lastWeight={exercise.lastWeight}
+                        lastWeights={exercise.lastWeights}
                         onClick={() => navigate(`/exercises/${exercise.id}`)}
                     />
                 ))}
                 {hasMore && <div ref={sentinelRef} className="h-4" />}
             </div>
 
-            {!loading && exercises.length === 0 && (
+            {!loading && !hasMore && exercises.length === 0 && (
                 <div className="flex flex-1 justify-center items-center text-text-muted font-medium">
                     Zoznam cvikov je prázdny
                 </div>
