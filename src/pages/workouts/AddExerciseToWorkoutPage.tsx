@@ -40,7 +40,14 @@ function AddExerciseToWorkoutPage() {
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
-    const [exerciseCount, setExerciseCount] = useState(0)
+    const [existingExerciseIds, setExistingExerciseIds] = useState<number[]>([]);
+
+    useEffect(() => {
+        if (!id) return
+        workoutApi.getById(Number(id)).then((data) => {
+            setExistingExerciseIds(data.sessionExercises.map((sessionExercise) => sessionExercise.exerciseId))
+        })
+    }, [id]);
 
     const loadingRef = useRef(false)
     const pageRef = useRef(0)
@@ -63,7 +70,6 @@ function AddExerciseToWorkoutPage() {
                 if (requestIdRef.current !== requestId) return
                 setExercises((curr) => [...curr, ...data.content])
                 setHasMore(!data.last)
-                setExerciseCount(data.totalElements)
                 pageRef.current = pageToLoad + 1
             }).finally(() => {
                 if (requestIdRef.current !== requestId) return
@@ -146,6 +152,7 @@ function AddExerciseToWorkoutPage() {
 
     const unselectedExercises = (exercises) ? exercises
         .filter((exercise) => !selectedIds.includes(exercise.id))
+        .filter((exercise) => !existingExerciseIds.includes(exercise.id))
         .filter((exercise) => {
             if (selectedCategory === 'Všetko') return true;
             if (selectedGroup) return exercise.muscleGroup === selectedGroup;
@@ -273,7 +280,7 @@ function AddExerciseToWorkoutPage() {
 
             <div className="px-5 mt-5">
                 <div className="text-text-faint text-[11px] font-bold tracking-[0.08em] uppercase mb-1">
-                    Všetky cviky ({exerciseCount})
+                    Všetky cviky ({unselectedExercises.length})
                 </div>
                 {unselectedExercises.map((exercise) => (
                     <div
