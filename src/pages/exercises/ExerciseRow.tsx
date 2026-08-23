@@ -8,6 +8,20 @@ import BodyweightIcon from "../../components/icons/BodyweightIcon.tsx";
 import CableIcon from "../../components/icons/CableIcon.tsx";
 import * as React from "react";
 
+function EmptySparkline() {
+    return (
+        <svg width={64} height={28}>
+            <line
+                x1={2} y1={14} x2={62} y2={14}
+                stroke="var(--color-text-faint)"
+                strokeWidth={2}
+                strokeDasharray="3 4"
+                strokeLinecap="round"
+            />
+        </svg>
+    )
+}
+
 function Sparkline({ data }:{ data:number[] }) {
     const points = data.map((value, index) => ({ index, value }))
     return (
@@ -61,7 +75,7 @@ function ExerciseRow({name, muscleGroup, equipment, lastDate, lastWeight, lastWe
             {lastWeights && lastWeights.length > 0 ? (
                 <Sparkline data={lastWeights} />
             ) : (
-                <span className="w-16 text-center text-text-faint text-xs shrink-0">NaN</span>
+                <EmptySparkline />
             )}
             <span className="text-text-faint text-lg">›</span>
         </div>
