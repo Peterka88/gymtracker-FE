@@ -56,7 +56,7 @@ function ExercisesListPage() {
         exerciseApi.getExercises(pageToLoad, size, activeMuscleGroups, search)
             .then((data) => {
                 if (requestIdRef.current !== requestId) return
-                setExercises((curr) => [...curr, ...data.content])
+                setExercises((curr) => pageToLoad === 0 ? data.content : [...curr, ...data.content])
                 setHasMore(!data.last)
                 pageRef.current = pageToLoad + 1
             }).finally(() => {
@@ -90,7 +90,6 @@ function ExercisesListPage() {
         requestIdRef.current += 1
         loadingRef.current = false
         setLoading(false)
-        setExercises([])
         setHasMore(true)
         pageRef.current = 0
         loadNextPage(0)
