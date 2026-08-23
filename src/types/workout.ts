@@ -15,6 +15,8 @@ export interface SessionExercise {
     exerciseName: string
     orderIndex: number
     note: string
+    lastWeight: number
+    lastReps: number
     workoutSets: WorkoutSet[]
 }
 

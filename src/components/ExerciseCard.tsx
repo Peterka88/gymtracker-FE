@@ -67,12 +67,23 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
     return (
         <div className="mx-5 mt-3 first:mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl">
             <div onClick={onToggle} className="flex items-center justify-between cursor-pointer">
-                <div className="flex items-center gap-1.5 text-[14.5px] font-extrabold">
-                    {exercise.exerciseName}
-                    {hasPr && (
-                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-carbs/[0.16] text-carbs text-[9.5px] font-extrabold">
-                            🏆 PR
-                        </span>
+                <div>
+                    <div className="flex items-center gap-1.5 text-[14.5px] font-extrabold">
+                        {exercise.exerciseName}
+                        {hasPr && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-carbs/[0.16] text-carbs text-[9.5px] font-extrabold">
+                                🏆 PR
+                            </span>
+                        )}
+                    </div>
+                    {exercise.lastWeight ? (
+                        <div className="text-text-muted text-[11.5px] mt-0.5">
+                            Naposledy: {exercise.lastWeight} kg × {exercise.lastReps}
+                        </div>
+                    ) : (
+                        <div className="text-text-faint text-[11.5px] mt-0.5">
+                            Naposledy: Zatiaľ žiadne dáta
+                        </div>
                     )}
                 </div>
                 <span className="text-[11.5px] font-bold flex items-center gap-1 text-text-muted">
@@ -123,7 +134,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                         </button>
                                         <button
                                             onClick={confirmDeleteSet}
-                                            className="flex w-12 justify-center items-center mt-4 bg-red-500 text-white text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer">
+                                            className="flex w-12 justify-center items-center mt-4 bg-red-500 text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer">
                                             <TrashIcon size={20}/>
                                         </button>
                                     </div>
