@@ -4,6 +4,7 @@ import BottomNav from "../../components/BottomNav.tsx";
 import ExerciseCard from "../../components/ExerciseCard.tsx";
 import type {SessionExercise, WorkoutSessionDetail, WorkoutSet} from "../../types/workout.ts";
 import ClockIcon from "../../components/icons/ClockIcon.tsx";
+import LocationCard from "../../components/LocationCard.tsx";
 import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
 import {workoutApi} from "../../api/workoutApi.ts";
 import TrashIcon from "../../components/icons/TrashIcon.tsx";
@@ -102,6 +103,7 @@ function ActiveWorkoutPage() {
                     ...data,
                     duration: 0,
                     note: '',
+                    location: null,
                     sessionExercises: []
                 })
                 navigate(`/workouts/${data.id}/active`, { replace: true })
@@ -451,6 +453,15 @@ function ActiveWorkoutPage() {
                         </span>
                     </div>
                 </div>
+            </div>
+
+            <div className="mx-5 mt-3">
+                <LocationCard
+                    location={session?.location ?? null}
+                    onClick={() => {
+                        // TODO: preklik na mapu / výber lokácie cez Google Maps API
+                    }}
+                />
             </div>
 
             {exercises.map((exercise) => (

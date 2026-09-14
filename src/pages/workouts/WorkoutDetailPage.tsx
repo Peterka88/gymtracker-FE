@@ -7,6 +7,7 @@ import WorkoutSummaryCard from "../../components/WorkoutSummaryCard.tsx";
 import BottomNav from "../../components/BottomNav.tsx";
 import {formatWorkoutDateTime} from "../../utils/formatDateTime.ts";
 import ClockIcon from "../../components/icons/ClockIcon.tsx";
+import LocationCard from "../../components/LocationCard.tsx";
 import TrashIcon from "../../components/icons/TrashIcon.tsx";
 import ConfirmDialog from "../../components/ConfirmDialog.tsx";
 
@@ -100,8 +101,15 @@ function WorkoutDetailPage() {
                         <div className="flex-1 p-3 bg-carbs/[0.08] border border-carbs/[0.22] rounded-2xl">
                             <div className="text-text-muted text-[11px] font-semibold">Rekordy</div>
                             <span className="text-[22px] text-carbs font-extrabold">{prCount} 🏆</span>
-
                         </div>
+                    </div>
+                    <div className="px-5 pt-2">
+                        <LocationCard
+                            location={workoutDetail.location}
+                            onClick={() => {
+                                // TODO: preklik na mapu / výber lokácie cez Google Maps API
+                            }}
+                        />
                     </div>
                     <div className="px-5 pt-5">
                         <div className="text-text-muted text-[13px] font-semibold uppercase">
