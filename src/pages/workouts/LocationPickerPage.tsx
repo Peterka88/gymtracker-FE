@@ -60,6 +60,7 @@ function LocationPickerPage() {
     const [darkMap, setDarkMap] = useState(false)
     const [center, setCenter] = useState(urlPosition ?? defaultCenter)
     const [position, setPosition] = useState<{ lat: number; lng: number } | null>(urlPosition)
+    const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null)
     const [locationName, setLocationName] = useState(searchParams.get("name") || "")
     const [address, setAddress] = useState<string | null>(null)
     const [geocoding, setGeocoding] = useState(false)
@@ -138,6 +139,31 @@ function LocationPickerPage() {
         }
     }, [position])
 
+    useEffect(() => {
+        if (!mapInstance || !currentLocation) return
+
+        if (currentLocationMarkerRef.current) {
+            currentLocationMarkerRef.current.position = currentLocation
+            return
+        }
+
+        let cancelled = false
+        google.maps.importLibrary("marker").then((lib) => {
+            if (cancelled) return
+            const { AdvancedMarkerElement } = lib as google.maps.MarkerLibrary
+            currentLocationMarkerRef.current = new AdvancedMarkerElement({
+                map: mapInstance,
+                position: currentLocation,
+                content: createCurrentLocationDot(),
+                zIndex: 0,
+            })
+        })
+
+        return () => {
+            cancelled = true
+        }
+    }, [mapInstance, currentLocation])
+
     function createCurrentLocationDot(): HTMLElement {
         const wrapper = document.createElement("div")
         wrapper.className = "current-location-wrapper"
@@ -164,20 +190,11 @@ function LocationPickerPage() {
                 setLocating(false)
                 mapInstance.panTo(coords)
 
-                if (currentLocationMarkerRef.current) {
-                    currentLocationMarkerRef.current.position = coords
-                    return
+                if (position === null) {
+                    setCenter(coords)
                 }
 
-                google.maps.importLibrary("marker").then((lib) => {
-                    const { AdvancedMarkerElement } = lib as google.maps.MarkerLibrary
-                    currentLocationMarkerRef.current = new AdvancedMarkerElement({
-                        map: mapInstance,
-                        position: coords,
-                        content: createCurrentLocationDot(),
-                        zIndex: 0,
-                    })
-                })
+                setCurrentLocation(coords)
             },
             () => {
                 showError("Nepodarilo sa zistiť polohu")
@@ -188,14 +205,9 @@ function LocationPickerPage() {
     }
 
     useEffect(() => {
-        if (urlPosition) return
-        if (!navigator.geolocation) return
-        navigator.geolocation.getCurrentPosition(
-            (pos) => setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-            () => {},
-            { enableHighAccuracy: true, timeout: 10000 }
-        )
-    }, [])
+        if (currentLocation || position) return
+        handleLocateMe()
+    }, [mapInstance])
 
     function onMapDblClick(event: google.maps.MapMouseEvent) {
         const lat = event.latLng?.lat()
