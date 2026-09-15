@@ -106,9 +106,7 @@ function WorkoutDetailPage() {
                     <div className="px-5 pt-2">
                         <LocationCard
                             location={workoutDetail.location}
-                            onClick={() => {
-                                // TODO: preklik na mapu / výber lokácie cez Google Maps API
-                            }}
+                            onClick={() => navigate(`/workouts/${id}/location`)}
                         />
                     </div>
                     <div className="px-5 pt-5">

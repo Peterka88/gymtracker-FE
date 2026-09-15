@@ -459,7 +459,18 @@ function ActiveWorkoutPage() {
                 <LocationCard
                     location={session?.location ?? null}
                     onClick={() => {
-                        // TODO: preklik na mapu / výber lokácie cez Google Maps API
+                        if (!session) return
+                        const location = session.location
+                        const params = new URLSearchParams()
+                        if (location?.latitude !== undefined && location?.longitude !== undefined) {
+                            params.set('lat', String(location.latitude))
+                            params.set('lng', String(location.longitude))
+                        }
+                        if (location?.locationName) {
+                            params.set('name', location.locationName)
+                        }
+                        const query = params.toString()
+                        navigate(`/workouts/${session.id}/location${query ? `?${query}` : ''}`)
                     }}
                 />
             </div>

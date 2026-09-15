@@ -14,6 +14,7 @@ import { ToastProvider } from "./context/ToastContext.tsx";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import ExerciseDetailPage from "./pages/exercises/ExerciseDetailPage.tsx";
+import LocationPickerPage from "./pages/workouts/LocationPickerPage.tsx";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
                         <Route path={"/workouts/new"} element={<ActiveWorkoutPage />} />
                         <Route path={"/workouts/:id/active"} element={<ActiveWorkoutPage />} />
                         <Route path={"/workouts/:id/add-exercise"} element={<AddExerciseToWorkoutPage />} />
+                        <Route path={"/workouts/:id/location"} element={<LocationPickerPage />} />
                         <Route path={"/workouts/:id"} element={<WorkoutDetailPage />} />
                         <Route path={"/exercises/:id"} element={<ExerciseDetailPage />} />
                         <Route path={"/exercises/:id/edit"} element={<AddEditExercisePage />} />
