@@ -106,7 +106,18 @@ function WorkoutDetailPage() {
                     <div className="px-5 pt-2">
                         <LocationCard
                             location={workoutDetail.location}
-                            onClick={() => navigate(`/workouts/${id}/location`)}
+                            onClick={() => {
+                                const location = workoutDetail.location
+                                const params = new URLSearchParams()
+                                if (location?.latitude && location?.longitude) {
+                                    params.set("lat", location.latitude.toString())
+                                    params.set("lng", location.longitude.toString())
+                                }
+                                if (location?.locationName) {
+                                    params.set("name", location.locationName)
+                                }
+                                navigate(`/workouts/${id}/location?${params.toString()}`)
+                            }}
                         />
                     </div>
                     <div className="px-5 pt-5">

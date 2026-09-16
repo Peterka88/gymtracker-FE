@@ -6,6 +6,7 @@ import type {Location} from "../../types/workout.ts";
 import {useToast} from "../../context/ToastContext.tsx";
 import BuildingIcon from "../../components/icons/BuildingIcon.tsx";
 import LocationIcon from "../../components/icons/LocationIcon.tsx";
+import TrashIcon from "../../components/icons/TrashIcon.tsx";
 
 function SunIcon() {
     return (
@@ -66,6 +67,7 @@ function LocationPickerPage() {
     const [geocoding, setGeocoding] = useState(false)
     const [saving, setSaving] = useState(false)
     const [locating, setLocating] = useState(false)
+    const [nameValidationError, setNameValidationError] = useState(false)
 
     const reverseGeocode = useCallback((lat: number, lng: number) => {
         setGeocoding(true)
@@ -220,6 +222,10 @@ function LocationPickerPage() {
 
     function confirmLocation() {
         if (!id || !address || !position) return
+        if (locationName.trim() === "") {
+            setNameValidationError(true)
+            return
+        }
         const location: Location = {
             locationName: locationName || address.split(",")[0],
             address,
@@ -233,6 +239,23 @@ function LocationPickerPage() {
                 navigate(-1)
             })
             .catch(() => showError("Lokáciu sa nepodarilo uložiť"))
+            .finally(() => setSaving(false))
+    }
+
+    function deleteLocation() {
+        if (!id) return
+        setSaving(true)
+        workoutApi.updateLocation(Number(id), {
+            locationName: null,
+            address: null,
+            latitude: null,
+            longitude: null,
+        })
+            .then(() => {
+                showSuccess("Lokácia vymazaná")
+                navigate(-1)
+            })
+            .catch(() => showError("Lokáciu sa nepodarilo vymazať"))
             .finally(() => setSaving(false))
     }
 
@@ -297,16 +320,21 @@ function LocationPickerPage() {
                 </button>
 
                 <div className="absolute inset-x-4 bottom-4 z-10 bg-card/90 backdrop-blur-xl border border-white/10 rounded-3xl p-4 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.55)]">
-                    <div className="flex items-center gap-2.5 bg-chip border border-white/8 rounded-2xl px-4 py-3 mb-3 transition-colors focus-within:border-accent/40">
-                        <span className="text-text-faint">
+                    <div className={`flex items-center gap-2.5 bg-chip border rounded-2xl px-4 py-3 mb-3 transition-colors ${nameValidationError ? 'border-red-500' : 'border-white/8 focus-within:border-accent/40'}`}>
+                        <span className={`${nameValidationError ? 'text-red-500' : 'text-text-faint'}`}>
                             <BuildingIcon size={16} />
                         </span>
                         <input
                             type="text"
-                            placeholder="Napr. Fitshaker Gym"
+                            placeholder={`${nameValidationError ? 'Názov nemôže byť prázdny' : 'Napr. Fitshaker Gym'}`}
                             value={locationName}
-                            onChange={(e) => setLocationName(e.target.value)}
-                            className="flex-1 bg-transparent outline-none text-[14px] text-text-primary placeholder:text-text-faint"
+                            onChange={(e) => {
+                                setLocationName(e.target.value)
+                                if (nameValidationError) {
+                                    setNameValidationError(false)
+                                }
+                            }}
+                            className={`flex-1 bg-transparent outline-none text-[14px] ${nameValidationError ? 'placeholder:text-red-500' : 'placeholder:text-text-faint'} text-text-primary`}
                         />
                     </div>
 
@@ -319,13 +347,23 @@ function LocationPickerPage() {
                         </div>
                     </div>
 
-                    <button
-                        onClick={confirmLocation}
-                        disabled={!address || saving}
-                        className="w-full bg-accent text-on-accent rounded-2xl py-3.5 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        { saving ? "Ukladám..." : "Potvrdiť lokáciu" }
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={confirmLocation}
+                            disabled={!address || saving}
+                            className="flex-1 bg-accent text-on-accent rounded-2xl py-3.5 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            { saving ? "Ukladám..." : "Potvrdiť lokáciu" }
+                        </button>
+                        {urlPosition && (
+                            <button
+                                onClick={deleteLocation}
+                                className="flex w-12 justify-center bg-btn text-red-500 rounded-2xl py-3.5 text-[14.5px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
+                            >
+                                <TrashIcon size={20} />
+                        </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -29,8 +29,8 @@ export interface WorkoutSet {
 }
 
 export interface Location {
-    locationName: string
-    address: string
-    latitude?: number
-    longitude?: number
+    locationName: string | null
+    address: string | null
+    latitude?: number | null
+    longitude?: number | null
 }
