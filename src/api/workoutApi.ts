@@ -1,6 +1,6 @@
 import {client} from "./client.ts";
 import type {AxiosRequestConfig} from "axios";
-import type {WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
+import type {Location, WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
 import {formatRelativeDay, formatRowDate} from "../utils/formatDateTime.ts";
 
@@ -60,6 +60,10 @@ export const workoutApi = {
         if (note) body = {note}
         if (name) body = {name}
         return client.patch(`/workouts/${workoutId}`, body)
+    },
+    updateLocation: (workoutId: number, location: Location) => {
+        return client.patch<Location>(`/workouts/${workoutId}/location`, location)
+            .then((res) => res.data)
     },
     updateExerciseNote: (exerciseSessionId: number, note: string) => {
         return client.patch(`/session-exercises/${exerciseSessionId}`, {note})

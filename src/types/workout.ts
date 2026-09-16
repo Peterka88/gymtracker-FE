@@ -6,6 +6,7 @@ export interface WorkoutSessionDetail {
     duration: number
     note: string
     pr: boolean
+    location: Location | null
     sessionExercises: SessionExercise[]
 }
 
@@ -25,4 +26,11 @@ export interface WorkoutSet {
     weight: number
     reps: number
     pr:boolean
+}
+
+export interface Location {
+    locationName: string | null
+    address: string | null
+    latitude?: number | null
+    longitude?: number | null
 }
