@@ -3,6 +3,7 @@ import type {AxiosRequestConfig} from "axios";
 import type {Location, WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
 import {formatRelativeDay, formatRowDate} from "../utils/formatDateTime.ts";
+import type {CalendarView} from "../types/calendarView.ts";
 
 interface WorkoutApiResponse {
     id: number;
@@ -70,6 +71,10 @@ export const workoutApi = {
     },
     deleteExercise: (exerciseSessionId: number) => {
         return client.delete(`/session-exercises/${exerciseSessionId}`)
+    },
+    getCalendarView: (year: number, month: number) => {
+        return client.get<CalendarView>(`/workouts/calendar`, {params: {year, month}})
+            .then((res) => res.data)
     }
 }
 

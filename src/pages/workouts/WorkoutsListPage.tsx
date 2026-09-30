@@ -4,7 +4,8 @@ import BottomNav from "../../components/BottomNav.tsx";
 import {useEffect, useState} from "react";
 import type {WorkoutSummary} from "../../types/WorkoutSummary.ts";
 import {workoutApi} from "../../api/workoutApi.ts";
-import BarbellIcon from "../../components/icons/BarbellIcon.tsx";
+import WorkoutActivityCard from "../../components/WorkoutActivityCard.tsx";
+import ListIcon from "../../components/icons/ListIcon.tsx";
 
 function WorkoutsListPage() {
 
@@ -25,12 +26,6 @@ function WorkoutsListPage() {
             setLoading(false)
         });
     }, [])
-
-    const stats = {
-        thisWeek: 4,
-        hoursInGym: '6,2',
-        streakDays: 12,
-    }
 
     const monthGroups = workouts.reduce<{ month: string; items: (typeof workouts[number] & { index: number })[] }[]>(
         (groups, workout, index) => {
@@ -53,42 +48,14 @@ function WorkoutsListPage() {
                     <div className="text-[26px] font-extrabold">Tréningy</div>
                     <div className="text-text-muted text-[12.5px] mt-0.5">42 záznamov · tento rok</div>
                 </div>
-                <button className="w-10 h-10 rounded-2xl bg-accent text-on-accent flex items-center justify-center text-xl font-bold cursor-pointer transition-all duration-150 hover:brightness-110 active:scale-[0.95]"
-                        onClick={() => navigate('/workouts/new')}>
-                    +
+                <button className="flex items-center gap-1.5 h-10 px-4 rounded-2xl border border-white/10 bg-chip text-text-secondary text-[13.5px] font-bold cursor-pointer transition-all duration-150 hover:bg-white/6 active:scale-[0.97]"
+                        onClick={() => navigate('/exercises')}>
+                    <ListIcon size={15} />
+                    Cviky
                 </button>
             </div>
 
-            <div className="flex gap-2.5 px-5 pt-2">
-                <div className="flex-1 p-3 bg-card border border-white/[0.07] rounded-2xl text-center">
-                    <div className="text-[18px] font-extrabold">{stats.thisWeek}</div>
-                    <div className="text-text-muted text-[10.5px] mt-0.5">tento týždeň</div>
-                </div>
-                <div className="flex-1 p-3 bg-card border border-white/[0.07] rounded-2xl text-center">
-                    <div className="text-[18px] font-extrabold">
-                        {stats.hoursInGym} <span className="text-text-muted text-[11px] font-semibold">h</span>
-                    </div>
-                    <div className="text-text-muted text-[10.5px] mt-0.5">čas v posilke</div>
-                </div>
-                <div className="flex-1 p-3 bg-card border border-white/[0.07] rounded-2xl text-center">
-                    <div className="text-[18px] font-extrabold">🔥 {stats.streakDays}</div>
-                    <div className="text-text-muted text-[10.5px] mt-0.5">dní v sérii</div>
-                </div>
-            </div>
-
-            <div
-                onClick={() => navigate('/exercises')}
-                className="mx-5 mt-4 p-4 bg-card border border-white/[0.07] rounded-2xl flex items-center gap-[13px] cursor-pointer"
-            >
-                <div className="w-[42px] h-[42px] rounded-xl bg-accent/[0.14] flex items-center justify-center text-accent shrink-0">
-                    <BarbellIcon />
-                </div>
-                <div className="flex-1">
-                    <div className="text-[14px] font-bold">Zoznam cvikov</div>
-                    <div className="text-text-muted text-xs mt-0.5">Progres a rekordy podľa cviku</div>
-                </div>
-                <span className="text-text-faint text-lg">›</span>
-            </div>
+            <WorkoutActivityCard />
 
             {loading && (
                 <div className="flex-1 flex items-center justify-center gap-1.5 py-6">
