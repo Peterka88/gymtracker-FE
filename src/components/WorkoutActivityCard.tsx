@@ -55,12 +55,39 @@ function WeekRow({ week }: { week: Cell[] }) {
     )
 }
 
-function WorkoutActivityCard({ stats }: { stats: WorkoutSessionsStats | null }) {
+function WeekdayHeader() {
+    return (
+        <div className="grid grid-cols-7 text-center mb-1.5">
+            {WEEKDAYS.map((day) => (
+                <span key={day} className="text-text-faint text-[10px] font-bold">{day}</span>
+            ))}
+        </div>
+    )
+}
+
+function ToggleButton({ expanded, onClick }: { expanded: boolean; onClick: () => void }) {
+    return (
+        <button
+            onClick={onClick}
+            className="w-full flex items-center justify-center gap-1 mt-3 py-1 text-accent text-[12px] font-bold cursor-pointer"
+        >
+            {expanded ? 'Zobraziť len týždeň' : 'Zobraziť celý mesiac'}
+            <span className={`inline-flex transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}>
+                <ChevronDownIcon size={13} />
+            </span>
+        </button>
+    )
+}
+
+function WorkoutActivityCard({ stats, year, month, onMonthChange }: {
+    stats: WorkoutSessionsStats | null
+    year: number
+    month: number
+    onMonthChange: (year: number, month: number) => void
+}) {
     const [expanded, setExpanded] = useState(false)
 
     const today = new Date()
-    const [year, setYear] = useState(today.getFullYear())
-    const [month, setMonth] = useState(today.getMonth())
     const monthLabel = MONTH_NAMES[month]
     const daysInMonth = new Date(year, month + 1, 0).getDate()
     const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7
@@ -70,6 +97,7 @@ function WorkoutActivityCard({ stats }: { stats: WorkoutSessionsStats | null }) 
     useEffect(() => {
         let cancelled = false
         setLoading(true)
+        setTrainedDays([])
         workoutApi.getCalendarView(year, month + 1).then((data) => {
             if (!cancelled) {
                 setLoading(false)
@@ -80,10 +108,8 @@ function WorkoutActivityCard({ stats }: { stats: WorkoutSessionsStats | null }) 
     }, [year, month]);
 
     const changeMonth = (delta: number) => {
-        setTrainedDays([])
         const d = new Date(year, month + delta, 1)
-        setYear(d.getFullYear())
-        setMonth(d.getMonth())
+        onMonthChange(d.getFullYear(), d.getMonth())
     }
     const isCurrentMonth = year === today.getFullYear() && month === today.getMonth()
 
@@ -146,51 +172,51 @@ function WorkoutActivityCard({ stats }: { stats: WorkoutSessionsStats | null }) 
                 </button>
             </div>
 
-            <div className={`transition-opacity duration-200 ${loading ? 'opacity-40' : 'opacity-100'}`}>
-                <div className="grid grid-cols-7 text-center mb-1.5">
-                    {WEEKDAYS.map((day) => (
-                        <span key={day} className="text-text-faint text-[10px] font-bold">{day}</span>
-                    ))}
+            <div className="relative">
+                {/* neviditeľná zbalená kópia drží výšku karty; živý kalendár ju prekrýva a rozbaľuje sa cez štatistiky */}
+                <div className="invisible" aria-hidden>
+                    <WeekdayHeader />
+                    <WeekRow week={currentWeek} />
+                    <ToggleButton expanded={false} onClick={() => {}} />
                 </div>
 
                 <div
-                    className="grid transition-[grid-template-rows] duration-300 ease-in-out"
-                    style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+                    className={`absolute top-0 inset-x-0 -mx-5 px-5 z-20 bg-card rounded-b-3xl`}
                 >
-                    <div className={`overflow-hidden transition-opacity duration-300 ${expanded ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="flex flex-col gap-1.5 pb-1.5">
-                            {weeksBefore.map((week, i) => (
-                                <WeekRow key={i} week={week} />
-                            ))}
+                    <div className={`transition-opacity duration-200 ${loading ? 'opacity-40' : 'opacity-100'}`}>
+                        <WeekdayHeader />
+
+                        <div
+                            className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                            style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+                        >
+                            <div className="overflow-hidden">
+                                <div className="flex flex-col gap-1.5 pb-1.5">
+                                    {weeksBefore.map((week, i) => (
+                                        <WeekRow key={i} week={week} />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <WeekRow week={currentWeek} />
+
+                        <div
+                            className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                            style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+                        >
+                            <div className="overflow-hidden">
+                                <div className="flex flex-col gap-1.5 pt-1.5">
+                                    {weeksAfter.map((week, i) => (
+                                        <WeekRow key={i} week={week} />
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <WeekRow week={currentWeek} />
-
-                <div
-                    className="grid transition-[grid-template-rows] duration-300 ease-in-out"
-                    style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
-                >
-                    <div className={`overflow-hidden transition-opacity duration-300 ${expanded ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="flex flex-col gap-1.5 pt-1.5">
-                            {weeksAfter.map((week, i) => (
-                                <WeekRow key={i} week={week} />
-                            ))}
-                        </div>
-                    </div>
+                    <ToggleButton expanded={expanded} onClick={() => setExpanded((e) => !e)} />
                 </div>
             </div>
-
-            <button
-                onClick={() => setExpanded((e) => !e)}
-                className="w-full flex items-center justify-center gap-1 mt-3 py-1 text-accent text-[12px] font-bold cursor-pointer"
-            >
-                {expanded ? 'Zobraziť len týždeň' : 'Zobraziť celý mesiac'}
-                <span className={`inline-flex transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}>
-                    <ChevronDownIcon size={13} />
-                </span>
-            </button>
 
             <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/[0.06]">
                 <div className="p-2 rounded-xl bg-accent/[0.08] flex items-center gap-2 min-w-0">

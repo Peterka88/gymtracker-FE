@@ -2,7 +2,7 @@ import {client} from "./client.ts";
 import type {AxiosRequestConfig} from "axios";
 import type {Location, WorkoutSessionDetail, WorkoutSet} from "../types/workout.ts";
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
-import {formatRelativeDay, formatRowDate} from "../utils/formatDateTime.ts";
+import {formatRelativeDay, formatRowDate, toMonthKey} from "../utils/formatDateTime.ts";
 import type {CalendarView} from "../types/calendarView.ts";
 import type {WorkoutSessionsStats} from "../types/WorkoutSessionsStats.ts";
 
@@ -90,6 +90,7 @@ function toWorkoutRowProps(workout: WorkoutApiResponse): WorkoutSummary {
         name: workout.name,
         date: day,
         month,
+        monthKey: toMonthKey(workout.date),
         pr: workout.pr,
         meta: `${formatRelativeDay(workout.date)} · ${workout.exercises} cvičení`
     }
