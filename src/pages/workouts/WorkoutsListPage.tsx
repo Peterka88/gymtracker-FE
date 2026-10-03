@@ -6,6 +6,13 @@ import type {WorkoutSummary} from "../../types/WorkoutSummary.ts";
 import {workoutApi} from "../../api/workoutApi.ts";
 import WorkoutActivityCard from "../../components/WorkoutActivityCard.tsx";
 import ListIcon from "../../components/icons/ListIcon.tsx";
+import type {WorkoutSessionsStats} from "../../types/WorkoutSessionsStats.ts";
+
+function recordsLabel(count: number) {
+    if (count === 1) return '1 záznam'
+    if (count >= 2 && count <= 4) return `${count} záznamy`
+    return `${count} záznamov`
+}
 
 function WorkoutsListPage() {
 
@@ -17,6 +24,12 @@ function WorkoutsListPage() {
     const [page, setPage] = useState(0)
     const [hasMore, setHasMore] = useState(true)
     const [loading, setLoading] = useState(true)
+
+    const [stats, setStats] = useState<WorkoutSessionsStats | null>(null)
+
+    useEffect(() => {
+        workoutApi.getStats().then(setStats)
+    }, [])
 
     useEffect(() => {
         workoutApi.getAll( 0, PAGE_SIZE).then((data) => {
@@ -46,7 +59,7 @@ function WorkoutsListPage() {
             <div className="flex items-center justify-between px-[22px] pt-1.5 pb-2">
                 <div>
                     <div className="text-[26px] font-extrabold">Tréningy</div>
-                    <div className="text-text-muted text-[12.5px] mt-0.5">42 záznamov · tento rok</div>
+                    <div className="text-text-muted text-[12.5px] mt-0.5">{stats ? recordsLabel(stats.workoutsThisYear) : '–'} · tento rok</div>
                 </div>
                 <button className="flex items-center gap-1.5 h-10 px-4 rounded-2xl border border-white/10 bg-chip text-text-secondary text-[13.5px] font-bold cursor-pointer transition-all duration-150 hover:bg-white/6 active:scale-[0.97]"
                         onClick={() => navigate('/exercises')}>
@@ -55,7 +68,7 @@ function WorkoutsListPage() {
                 </button>
             </div>
 
-            <WorkoutActivityCard />
+            <WorkoutActivityCard stats={stats} />
 
             {loading && (
                 <div className="flex-1 flex items-center justify-center gap-1.5 py-6">

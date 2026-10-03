@@ -5,6 +5,8 @@ import BarbellIcon from "./icons/BarbellIcon.tsx";
 import ClockIcon from "./icons/ClockIcon.tsx";
 import {workoutApi} from "../api/workoutApi.ts";
 import type {CalendarDay} from "../types/calendarView.ts";
+import type {WorkoutSessionsStats} from "../types/WorkoutSessionsStats.ts";
+import {muscleGroupLabel} from "../types/Exercises.ts";
 
 const WEEKDAYS = ['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne']
 const MONTH_NAMES = [
@@ -12,14 +14,8 @@ const MONTH_NAMES = [
     'Júl', 'August', 'September', 'Október', 'November', 'December',
 ]
 
-const stats = {
-    workoutsThisMonth: 9,
-    prsThisMonth: 3,
-    favoriteExercise: 'Bench press',
-    daysSinceLast: 2,
-}
-
-function daysSinceShort(days: number) {
+function daysSinceShort(days: number | null | undefined) {
+    if (days == null) return '–'
     if (days === 0) return 'dnes'
     if (days === 1) return '1 deň'
     if (days <= 4) return `${days} dni`
@@ -59,7 +55,7 @@ function WeekRow({ week }: { week: Cell[] }) {
     )
 }
 
-function WorkoutActivityCard() {
+function WorkoutActivityCard({ stats }: { stats: WorkoutSessionsStats | null }) {
     const [expanded, setExpanded] = useState(false)
 
     const today = new Date()
@@ -202,8 +198,8 @@ function WorkoutActivityCard() {
                         <CalendarIcon size={12} />
                     </div>
                     <div className="min-w-0">
-                        <div className="text-[13px] font-extrabold leading-none">{stats.workoutsThisMonth}</div>
-                        <div className="text-text-muted text-[9px] mt-0.5 truncate">tréningov / mesiac</div>
+                        <div className="text-[13px] font-extrabold leading-none">{stats?.workoutsLast30Days ?? '–'}</div>
+                        <div className="text-text-muted text-[9px] mt-0.5 truncate">tréningov / 30 dní</div>
                     </div>
                 </div>
                 <div className="p-2 rounded-xl bg-carbs/[0.08] flex items-center gap-2 min-w-0">
@@ -211,7 +207,7 @@ function WorkoutActivityCard() {
                         🏆
                     </div>
                     <div className="min-w-0">
-                        <div className="text-[13px] font-extrabold leading-none">{stats.prsThisMonth}</div>
+                        <div className="text-[13px] font-extrabold leading-none">{stats?.prsLast30Days ?? '–'}</div>
                         <div className="text-text-muted text-[9px] mt-0.5 truncate">nové rekordy / 30 dní</div>
                     </div>
                 </div>
@@ -220,8 +216,12 @@ function WorkoutActivityCard() {
                         <BarbellIcon size={12} />
                     </div>
                     <div className="min-w-0">
-                        <div className="text-[12px] font-bold leading-tight truncate">{stats.favoriteExercise}</div>
-                        <div className="text-text-faint text-[9px] mt-0.5">obľúbený cvik / 30 dní</div>
+                        <div className="text-[12px] font-bold leading-tight truncate">{stats?.neglectedMuscleGroup ? muscleGroupLabel[stats.neglectedMuscleGroup.muscleGroup] : '–'}</div>
+                        <div className="text-text-faint text-[9px] mt-0.5">{stats?.neglectedMuscleGroup
+                                ? stats.neglectedMuscleGroup.daysSinceLastTrained === null
+                                    ? 'zatiaľ netrénované'
+                                    : `zanedbané · ${daysSinceShort(stats.neglectedMuscleGroup.daysSinceLastTrained)}`
+                                : 'zanedbaná partia'}</div>
                     </div>
                 </div>
                 <div className="p-2 rounded-xl bg-chip flex items-center gap-2 min-w-0">
@@ -229,7 +229,7 @@ function WorkoutActivityCard() {
                         <ClockIcon size={12} />
                     </div>
                     <div className="min-w-0">
-                        <div className="text-[12px] font-bold leading-tight truncate">{daysSinceShort(stats.daysSinceLast)}</div>
+                        <div className="text-[12px] font-bold leading-tight truncate">{daysSinceShort(stats?.daysSinceLastWorkout)}</div>
                         <div className="text-text-faint text-[9px] mt-0.5">od tréningu</div>
                     </div>
                 </div>

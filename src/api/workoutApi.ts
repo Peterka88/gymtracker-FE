@@ -4,6 +4,7 @@ import type {Location, WorkoutSessionDetail, WorkoutSet} from "../types/workout.
 import type {WorkoutSummary} from "../types/WorkoutSummary.ts";
 import {formatRelativeDay, formatRowDate} from "../utils/formatDateTime.ts";
 import type {CalendarView} from "../types/calendarView.ts";
+import type {WorkoutSessionsStats} from "../types/WorkoutSessionsStats.ts";
 
 interface WorkoutApiResponse {
     id: number;
@@ -74,6 +75,10 @@ export const workoutApi = {
     },
     getCalendarView: (year: number, month: number) => {
         return client.get<CalendarView>(`/workouts/calendar`, {params: {year, month}})
+            .then((res) => res.data)
+    },
+    getStats: () => {
+        return client.get<WorkoutSessionsStats>(`/workouts/stats`)
             .then((res) => res.data)
     }
 }
