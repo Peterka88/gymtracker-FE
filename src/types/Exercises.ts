@@ -9,9 +9,7 @@ export type MuscleGroup =
     | "TRICEPS"
     | "FOREARMS"
     | "CORE"
-    | "QUADRICEPS"
-    | "HAMSTRINGS"
-    | "GLUTES"
+    | "LEGS"
     | "CALVES"
     | "FULL_BODY";
 
@@ -54,9 +52,7 @@ export const muscleGroupLabel: Record<MuscleGroup, string> = {
     TRICEPS: 'Triceps',
     FOREARMS: 'Predlaktia',
     CORE: 'Brucho',
-    QUADRICEPS: 'Kvadricepsy',
-    HAMSTRINGS: 'Zadné stehná',
-    GLUTES: 'Sedacie svaly',
+    LEGS: 'Stehná',
     CALVES: 'Lýtka',
     FULL_BODY: 'Celé telo',
 };
@@ -78,9 +74,7 @@ export const muscleGroupCategory: Record<MuscleGroup, MuscleGroupCategory> = {
     TRICEPS: MuscleGroupCategory.Ruky,
     FOREARMS: MuscleGroupCategory.Ruky,
     CORE: MuscleGroupCategory.Brucho,
-    QUADRICEPS: MuscleGroupCategory.Nohy,
-    HAMSTRINGS: MuscleGroupCategory.Nohy,
-    GLUTES: MuscleGroupCategory.Nohy,
+    LEGS: MuscleGroupCategory.Nohy,
     CALVES: MuscleGroupCategory.Nohy,
     FULL_BODY: MuscleGroupCategory.CeleTelo,
 };
