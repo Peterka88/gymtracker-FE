@@ -3,6 +3,7 @@ export interface WorkoutSummary {
     name: string
     date: string
     month: string
+    monthKey: string
     pr: boolean
     meta: string
 }

@@ -20,8 +20,9 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
     const lastSet = exercise.workoutSets[exercise.workoutSets.length - 1];
 
     const [addingSet, setAddingSet] = useState(false);
-    const [draftWeight, setDraftWeight] = useState(lastSet?.weight ?? 0);
-    const [draftReps, setDraftReps] = useState(lastSet?.reps ?? 0);
+    // pri prvej sérii sú polia prázdne a ukazujú len placeholder
+    const [draftWeight, setDraftWeight] = useState<number | null>(lastSet?.weight ?? null);
+    const [draftReps, setDraftReps] = useState<number | null>(lastSet?.reps ?? null);
 
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editingSetId, setEditingId] = useState<number | null>(null)
@@ -32,12 +33,13 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
 
     function openAddSet() {
         setEditingIndex(null);
-        setDraftWeight(lastSet?.weight ?? 0);
-        setDraftReps(lastSet?.reps ?? 0);
+        setDraftWeight(lastSet?.weight ?? null);
+        setDraftReps(lastSet?.reps ?? null);
         setAddingSet(true);
     }
 
     function confirmAddSet() {
+        if (draftWeight === null || draftReps === null) return;
         onAddSet(draftWeight, draftReps);
         setAddingSet(false);
     }
@@ -176,12 +178,13 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                     </button>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Stepper label="Váha (kg)" value={draftWeight} onChange={setDraftWeight} color="text-protein" />
-                                    <Stepper label="Opakovania" value={draftReps} onChange={setDraftReps} color="text-fat" allowDecimals={false} />
+                                    <Stepper label="Váha (kg)" value={draftWeight} onChange={setDraftWeight} color="text-protein" placeholder={exercise.lastWeight ?? 0} />
+                                    <Stepper label="Opakovania" value={draftReps} onChange={setDraftReps} color="text-fat" allowDecimals={false} placeholder={exercise.lastReps ?? 0} />
                                 </div>
                                 <button
                                     onClick={confirmAddSet}
-                                    className="w-full mt-4 bg-accent text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer"
+                                    disabled={draftWeight === null || draftReps === null}
+                                    className="w-full mt-4 bg-accent text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
                                 >
                                     + Pridať sériu
                                 </button>

@@ -49,6 +49,19 @@ export function formatRowDate(date: string): { day: string; month: string } {
     }
 }
 
+export function shortMonthLabel(month: number): string {
+    return MONTHS_SHORT[month]
+}
+
+export function monthKey(year: number, month: number): string {
+    return `${year}-${pad(month + 1)}`
+}
+
+export function toMonthKey(date: string): string {
+    const parsed = new Date(date)
+    return monthKey(parsed.getFullYear(), parsed.getMonth())
+}
+
 export function formatRelativeDay(date: string): string {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
