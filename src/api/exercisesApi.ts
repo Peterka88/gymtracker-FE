@@ -9,7 +9,7 @@ import type {
     MuscleGroup
 } from "../types/Exercises.ts";
 import type {PageResponse} from "../types/PageResponse.ts";
-import {formatRowDate} from "../utils/formatDateTime.ts";
+import {formatRowDate, toMonthKey} from "../utils/formatDateTime.ts";
 
 
 export const exerciseApi = {
@@ -65,6 +65,7 @@ function toExerciseHistoryRowProps(record: ExerciseHistory): ExerciseHistoryRow 
         name: record.name,
         date: day,
         month,
+        monthKey: toMonthKey(record.date),
         pr: record.pr,
         meta: `${record.setCount} série · ${record.totalReps} opakovaní · Objem ${record.volume.toLocaleString('sk-SK')} kg`,
         weight: record.bestWeight
