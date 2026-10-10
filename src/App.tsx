@@ -15,6 +15,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import ExerciseDetailPage from "./pages/exercises/ExerciseDetailPage.tsx";
 import LocationPickerPage from "./pages/workouts/LocationPickerPage.tsx";
+import ScrollToTop from "./components/ScrollToTop.tsx";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
     <AppShell>
         <ToastProvider>
             <Router>
+                <ScrollToTop />
                 <Routes>
                     <Route path={"/"} element={<Login />} />
                     <Route element={<ProtectedRoute />}>
