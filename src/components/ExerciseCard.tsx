@@ -9,7 +9,7 @@ import ConfirmDialog from "./ConfirmDialog.tsx";
 function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onDeleteExercise, onNotesChange, onNotesBlur }: {
     exercise: UiSessionExercise
     onToggle: () => void
-    onAddSet: (weight: number | null, reps: number | null) => void
+    onAddSet: (weight: number, reps: number) => void
     onEditSet: (setIndex: number, setId: number | null, weight: number, reps: number) => void
     onDeleteSet: (setIndex: number, setId: number | null) => void
     onDeleteExercise: () => void
@@ -38,7 +38,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
         setAddingSet(true);
     }
 
-    function confirmAddSet(weight: number | null, reps: number | null) {
+    function confirmAddSet(weight: number, reps: number) {
         onAddSet(draftWeight ?? weight, draftReps ?? reps);
         setAddingSet(false);
     }
