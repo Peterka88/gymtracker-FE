@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom"
-import { useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode, type PointerEvent } from "react"
 import ClockIcon from "./icons/ClockIcon.tsx"
 
 function HomeIcon() {
@@ -102,6 +102,43 @@ function BottomNav() {
 
     const navigate = useNavigate();
     const [sheetOpen, setSheetOpen] = useState(false);
+    const [dragY, setDragY] = useState(0);
+    const [dragging, setDragging] = useState(false);
+    const dragStartY = useRef(0);
+    const pressed = useRef(false);
+
+    // keď je sheet otvorený, stránka za ním sa nesmie scrollovať
+    useEffect(() => {
+        if (!sheetOpen) return;
+        const previous = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = previous; };
+    }, [sheetOpen]);
+
+    function onSheetPointerDown(e: PointerEvent<HTMLDivElement>) {
+        pressed.current = true;
+        dragStartY.current = e.clientY;
+    }
+
+    function onSheetPointerMove(e: PointerEvent<HTMLDivElement>) {
+        if (!pressed.current) return;
+        const delta = e.clientY - dragStartY.current;
+        // ťahanie sa začne až po malom posune, aby klik na tlačidlá fungoval normálne
+        if (!dragging) {
+            if (Math.abs(delta) < 5) return;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            setDragging(true);
+        }
+        setDragY(Math.max(0, delta));
+    }
+
+    function onSheetPointerEnd() {
+        pressed.current = false;
+        if (!dragging) return;
+        setDragging(false);
+        if (dragY > 100) setSheetOpen(false);
+        setDragY(0);
+    }
 
     function goToNewWorkout() {
         setSheetOpen(false);
@@ -112,15 +149,20 @@ function BottomNav() {
         <>
             <div
                 onClick={() => setSheetOpen(false)}
-                className={`fixed inset-0 bg-black/55 z-30 transition-opacity duration-200 ${
+                className={`fixed inset-0 bg-black/55 z-30 transition-opacity duration-200 touch-none ${
                     sheetOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
                 }`}
             />
 
             <div
-                className={`fixed left-0 right-0 bottom-0 max-w-[430px] mx-auto z-40 bg-chip border-t border-white/8 rounded-t-[28px] px-5 pt-2.5 pb-8 transition-transform duration-300 ease-out ${
-                    sheetOpen ? 'translate-y-0' : 'translate-y-full'
-                }`}
+                onPointerDown={onSheetPointerDown}
+                onPointerMove={onSheetPointerMove}
+                onPointerUp={onSheetPointerEnd}
+                onPointerCancel={onSheetPointerEnd}
+                style={{ transform: `translateY(${dragY}px)` }}
+                className={`fixed left-0 right-0 bottom-0 max-w-[430px] mx-auto z-40 bg-chip border-t border-white/8 rounded-t-[28px] px-5 pt-2.5 pb-8 touch-none select-none overscroll-contain ${
+                    dragging ? '' : 'transition-transform duration-300 ease-out'
+                } ${sheetOpen ? 'translate-y-0' : 'translate-y-full'}`}
             >
                 <div className="flex justify-center pb-4">
                     <div className="w-10 h-1.5 rounded-full bg-white/20" />
