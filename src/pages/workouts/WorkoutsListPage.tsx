@@ -137,7 +137,7 @@ function WorkoutsListPage() {
                 </button>
             </div>
 
-            <div ref={cardRef} className="sticky top-0 z-10 bg-bg pb-2">
+            <div ref={cardRef} className="sticky top-[env(safe-area-inset-top)] z-10 bg-bg pb-2">
                 <WorkoutActivityCard
                     stats={stats}
                     year={selectedMonth.year}
