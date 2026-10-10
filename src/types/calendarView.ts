@@ -9,5 +9,5 @@ export interface CalendarView {
 export interface CalendarDay {
     workoutSessionId: number
     dayOfMonth: number
-    pr: boolean
+    hasPr: boolean
 }

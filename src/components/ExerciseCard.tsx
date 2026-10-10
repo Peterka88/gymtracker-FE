@@ -9,7 +9,7 @@ import ConfirmDialog from "./ConfirmDialog.tsx";
 function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, onDeleteExercise, onNotesChange, onNotesBlur }: {
     exercise: UiSessionExercise
     onToggle: () => void
-    onAddSet: (weight: number, reps: number) => void
+    onAddSet: (weight: number | null, reps: number | null) => void
     onEditSet: (setIndex: number, setId: number | null, weight: number, reps: number) => void
     onDeleteSet: (setIndex: number, setId: number | null) => void
     onDeleteExercise: () => void
@@ -38,9 +38,8 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
         setAddingSet(true);
     }
 
-    function confirmAddSet() {
-        if (draftWeight === null || draftReps === null) return;
-        onAddSet(draftWeight, draftReps);
+    function confirmAddSet(weight: number | null, reps: number | null) {
+        onAddSet(draftWeight ?? weight, draftReps ?? reps);
         setAddingSet(false);
     }
 
@@ -182,8 +181,7 @@ function ExerciseCard({ exercise, onToggle, onAddSet, onEditSet, onDeleteSet, on
                                     <Stepper label="Opakovania" value={draftReps} onChange={setDraftReps} color="text-fat" allowDecimals={false} placeholder={exercise.lastReps ?? 0} />
                                 </div>
                                 <button
-                                    onClick={confirmAddSet}
-                                    disabled={draftWeight === null || draftReps === null}
+                                    onClick={() => confirmAddSet(exercise.lastWeight ?? 0, exercise.lastReps ?? 0)}
                                     className="w-full mt-4 bg-accent text-on-accent rounded-2xl py-3 text-[14px] font-extrabold transition-all duration-150 hover:brightness-110 active:scale-[0.97] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
                                 >
                                     + Pridať sériu

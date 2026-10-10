@@ -28,18 +28,18 @@ function DayCell({ cell }: { cell: Cell }) {
     return (
         <div className="relative flex items-center justify-center py-0.5">
             {cell.day !== null && (
-                <>
+                <div className="relative">
                     <span
                         className={`w-7 h-7 flex items-center justify-center rounded-full text-[12px] font-bold
-                        ${cell.trained ? 'bg-accent text-on-accent' : 'text-text-secondary'}
-                        ${cell.isToday && !cell.trained ? 'ring-1 ring-accent text-accent' : ''}`}
+                        ${cell.isToday ? 'bg-protein text-white' : cell.trained ? 'bg-accent text-on-accent' : 'text-text-secondary'}
+                        ${cell.isToday && cell.trained ? 'ring-2 ring-accent ring-offset-2 ring-offset-card' : ''}`}
                     >
                         {cell.day}
                     </span>
                     {cell.pr && (
-                        <span className="absolute top-0 right-1.5 w-1.5 h-1.5 rounded-full bg-carbs" />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-yellow-400 border border-card" />
                     )}
-                </>
+                </div>
             )}
         </div>
     )
@@ -86,6 +86,7 @@ function WorkoutActivityCard({ stats, year, month, onMonthChange }: {
     onMonthChange: (year: number, month: number) => void
 }) {
     const [expanded, setExpanded] = useState(false)
+    const [statsExpanded, setStatsExpanded] = useState(true)
 
     const today = new Date()
     const monthLabel = MONTH_NAMES[month]
@@ -129,7 +130,7 @@ function WorkoutActivityCard({ stats, year, month, onMonthChange }: {
         const index = firstWeekday + td.dayOfMonth - 1
         if (index >= 0 && index < monthCells.length) {
             monthCells[index].trained = true
-            monthCells[index].pr = td.pr
+            monthCells[index].pr = td.hasPr
         }
     }
 
@@ -218,7 +219,24 @@ function WorkoutActivityCard({ stats, year, month, onMonthChange }: {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/[0.06]">
+            <div className="mt-4 pt-1 border-t border-white/[0.06]">
+                <button
+                    onClick={() => setStatsExpanded((e) => !e)}
+                    className="w-full flex items-center justify-center gap-1 py-1 text-accent text-[12px] font-bold cursor-pointer"
+                >
+                    {statsExpanded ? 'Skryť štatistiky' : 'Zobraziť štatistiky'}
+                    <span className={`inline-flex transition-transform duration-200 ${statsExpanded ? 'rotate-180' : ''}`}>
+                        <ChevronDownIcon size={13} />
+                    </span>
+                </button>
+            </div>
+
+            <div
+                className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                style={{ gridTemplateRows: statsExpanded ? '1fr' : '0fr' }}
+            >
+            <div className="overflow-hidden">
+            <div className="grid grid-cols-2 gap-2 pt-2">
                 <div className="p-2 rounded-xl bg-accent/[0.08] flex items-center gap-2 min-w-0">
                     <div className="w-6 h-6 rounded-lg bg-accent/[0.16] flex items-center justify-center text-accent shrink-0">
                         <CalendarIcon size={12} />
@@ -259,6 +277,8 @@ function WorkoutActivityCard({ stats, year, month, onMonthChange }: {
                         <div className="text-text-faint text-[9px] mt-0.5">od tréningu</div>
                     </div>
                 </div>
+            </div>
+            </div>
             </div>
         </div>
     )
