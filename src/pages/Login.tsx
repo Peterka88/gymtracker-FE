@@ -54,7 +54,7 @@ function Login() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-full">
       <div className="flex flex-col items-center pt-11 px-8">
         <div className="w-[72px] h-[72px] rounded-[22px] bg-card border border-white/[0.07] flex items-center justify-center">
           <div className="w-8 h-8 rounded-full bg-accent" />

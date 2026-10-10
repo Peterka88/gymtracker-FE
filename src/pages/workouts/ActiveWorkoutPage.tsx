@@ -370,7 +370,7 @@ function ActiveWorkoutPage() {
     }
 
     return (
-        <div className="relative flex flex-col min-h-screen pb-56">
+        <div className="relative flex flex-col min-h-full pb-56">
             {!session && (
                 <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 bg-bg/75 backdrop-blur-sm">
                     <div className="text-accent animate-bounce">

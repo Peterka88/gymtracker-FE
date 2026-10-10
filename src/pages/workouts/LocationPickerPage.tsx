@@ -260,7 +260,7 @@ function LocationPickerPage() {
     }
 
     return (
-        <div className="relative flex flex-col h-screen">
+        <div className="relative flex flex-col h-full">
             <div className="flex items-center justify-between px-5 pt-1.5 pb-3">
                 <button
                     onClick={() => navigate(-1)}

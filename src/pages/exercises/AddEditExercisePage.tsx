@@ -65,7 +65,7 @@ function AddEditExercisePage() {
 
     if (id && loading) {
         return (
-            <div className="flex flex-1 justify-center min-h-screen items-center py-4">
+            <div className="flex flex-1 justify-center min-h-full items-center py-4">
                 <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
             </div>
         )
@@ -74,7 +74,7 @@ function AddEditExercisePage() {
     const { showSuccess, showError } = useToast()
 
     return (
-        <div className="flex flex-col min-h-screen pb-8">
+        <div className="flex flex-col min-h-full pb-8">
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button onClick={() => navigate('/exercises')} className="w-[38px] h-[38px] rounded-full bg-btn border border-white/[0.08] flex items-center justify-center text-text-primary text-xl leading-none cursor-pointer">‹</button>
                 <div className="text-[20px] font-extrabold">{(id) ? "Úprava cviku" : "Nový cvik"}</div>

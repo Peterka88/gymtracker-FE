@@ -54,7 +54,7 @@
 
 @layer base {
   body {
-    @apply bg-bg text-text-primary font-sans antialiased pt-[env(safe-area-inset-top)];
+    @apply bg-bg text-text-primary font-sans antialiased;
   }
 }
 

@@ -5,6 +5,7 @@ import {useEffect, useRef, useState} from "react";
 import type {WorkoutSummary} from "../../types/WorkoutSummary.ts";
 import {workoutApi} from "../../api/workoutApi.ts";
 import WorkoutActivityCard from "../../components/WorkoutActivityCard.tsx";
+import {APP_SCROLL_ID} from "../../components/AppShell.tsx";
 import ListIcon from "../../components/icons/ListIcon.tsx";
 import type {WorkoutSessionsStats} from "../../types/WorkoutSessionsStats.ts";
 import {monthKey, shortMonthLabel} from "../../utils/formatDateTime.ts";
@@ -61,22 +62,26 @@ function WorkoutsListPage() {
         const target = document.getElementById(`month-${monthKey(year, month)}`)
         if (!target) return
         holdScrollSync()
+        const scroller = document.getElementById(APP_SCROLL_ID)
+        if (!scroller) return
         const cardHeight = cardRef.current?.offsetHeight ?? 0
-        window.scrollTo({
-            top: target.getBoundingClientRect().top + window.scrollY - cardHeight - 10,
+        scroller.scrollTo({
+            top: target.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - cardHeight - 10,
             behavior: 'smooth',
         })
     }
 
     useEffect(() => {
         let frame = 0
+        const scroller = document.getElementById(APP_SCROLL_ID)
+        if (!scroller) return
 
         const syncCalendarWithScroll = () => {
             if (programmaticScroll.current) {
                 holdScrollSync()
                 return
             }
-            const threshold = (cardRef.current?.offsetHeight ?? 0) + 8
+            const threshold = scroller.getBoundingClientRect().top + (cardRef.current?.offsetHeight ?? 0) + 8
             let activeKey: string | null = null
             for (const el of document.querySelectorAll<HTMLElement>('[data-month-group]')) {
                 if (el.getBoundingClientRect().top <= threshold) activeKey = el.dataset.monthGroup!
@@ -94,9 +99,9 @@ function WorkoutsListPage() {
             frame = requestAnimationFrame(syncCalendarWithScroll)
         }
 
-        window.addEventListener('scroll', onScroll, { passive: true })
+        scroller.addEventListener('scroll', onScroll, { passive: true })
         return () => {
-            window.removeEventListener('scroll', onScroll)
+            scroller.removeEventListener('scroll', onScroll)
             cancelAnimationFrame(frame)
         }
     }, [])
@@ -124,7 +129,7 @@ function WorkoutsListPage() {
         : loadedGroups
 
     return (
-        <div className="flex flex-col min-h-screen pb-28">
+        <div className="flex flex-col min-h-full pb-28">
             <div className="flex items-center justify-between px-[22px] pt-1.5 pb-2">
                 <div>
                     <div className="text-[26px] font-extrabold">Tréningy</div>
@@ -137,7 +142,7 @@ function WorkoutsListPage() {
                 </button>
             </div>
 
-            <div ref={cardRef} className="sticky top-[env(safe-area-inset-top)] z-10 bg-bg pb-2">
+            <div ref={cardRef} className="sticky top-0 z-10 bg-bg pb-2">
                 <WorkoutActivityCard
                     stats={stats}
                     year={selectedMonth.year}

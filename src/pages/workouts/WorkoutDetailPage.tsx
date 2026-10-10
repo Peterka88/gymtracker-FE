@@ -35,7 +35,7 @@ function WorkoutDetailPage() {
         .filter((set) => set.pr).length ?? 0
 
     return (
-        <div className="flex flex-col min-h-screen pb-28">
+        <div className="flex flex-col min-h-full pb-28">
             <div className={"flex items-center justify-between px-5 pt-1.5 pb-3"}>
                 <button
                     className="w-[38px] h-[38px] rounded-full bg-btn border border-white/8 flex items-center justify-center text-xl leading-none cursor-pointer"

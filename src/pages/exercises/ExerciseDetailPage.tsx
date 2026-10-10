@@ -179,7 +179,7 @@ function ExerciseDetailPage() {
 
     if (!exerciseStats) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
+            <div className="flex min-h-full items-center justify-center">
                 <div className="w-12 h-12 rounded-full border-3 border-white/10 border-t-accent animate-spin" />
             </div>
         )
@@ -189,7 +189,7 @@ function ExerciseDetailPage() {
     const progressDelta = formatProgressDelta(exerciseStats.progressData, selectedGraph)
 
     return (
-        <div className="flex flex-col min-h-screen pb-28">
+        <div className="flex flex-col min-h-full pb-28">
             <div className="flex items-center justify-between px-5 pt-1.5 pb-3">
                <button className="w-9.5 h-9.5 rounded-full bg-btn border border-white/8 text-xl leading-none cursor-pointer"
                        onClick={() => navigate(-1)}>‹</button>

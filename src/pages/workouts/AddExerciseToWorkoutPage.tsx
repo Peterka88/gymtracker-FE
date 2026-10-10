@@ -162,7 +162,7 @@ function AddExerciseToWorkoutPage() {
         : [];
 
     return (
-        <div className="flex flex-col min-h-screen pb-28">
+        <div className="flex flex-col min-h-full pb-28">
             <div className="flex items-center justify-between mt-5 mx-2">
                 <button
                     onClick={() => navigate(`/workouts/${id}/active`)}
